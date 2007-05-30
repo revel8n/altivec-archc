@@ -5,8 +5,8 @@ tests := $(addsuffix .bin, $(bases))
 all: $(tests)
 
 %.bin: %.c
-	@powerpc-elf-gcc -O0 --specs=archc -o $@ $<
-	@powerpc-elf-gcc -O0 --specs=archc -S $<
+	@powerpc-elf-gcc -maltivec -O0 --specs=archc -o $@ $<
+	@powerpc-elf-gcc -maltivec -O0 --specs=archc -S $<
 	@echo '    ' CC $@
 
 clean: 
