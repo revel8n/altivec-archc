@@ -9,6 +9,6 @@ int main() {
 
 	asm("lvebx 13, 0, %0" : : "r"(uv));
 
-	STORE_VECTOR_UBYTE(13, b00, b01, b02, b03, b04, b05, b06, b07, b08, b09, b10, b11, b12, b13, b14, b15);
+	STORE_VECTOR_UBYTE(13, b15, b14, b13, b12, b11, b10, b09, b08, b07, b06, b05, b04, b03, b02, b01, b00); 
 	return !(b00 == 42);
 }
