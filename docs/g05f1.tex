@@ -1,0 +1,282 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[brazil]{babel}
+\usepackage{palatino}
+\usepackage{fullpage}
+
+\newcommand{\tech}[1]{\textit{#1}}
+\newcommand{\who}[1]{\textbf{ (#1)}}
+
+\begin{document}
+
+\title{Projeto de MC723 - Grupo 05\\ Modelagem das instruções AltiVec no ArchC}
+\author{
+Caio Marcelo de Oliveira Filho, 015599 \and
+Helder dos Santos Ribeiro, 033245 \and
+Ribamar Santarosa de Sousa, 017209 \and 
+Tarcísio Genaro Rodrigues, 017391
+}
+
+\date{}
+\maketitle
+
+\section{Introdução}
+
+\tech{AltiVec} é um conjunto de instruções para operações \tech{SIMD} com dados
+inteiros e ponto flutuante para o processador \tech{PowerPC}. SIMD significa
+\emph{Single Instruction, Multiple Data}, ou seja, uma instrução consegue
+realizar uma mesma operação sobre vários dados ao mesmo tempo. Esse conjunto de
+instruções também é conhecido pelos nomes \tech{VMX} e \tech{Velocity Engine},
+dependendo do fabricante. O AltiVec também especifica um conjunto de novos
+registradores para serem utilizados com essas instruções.
+
+Instruções \emph{SIMD} são um exemplo de \emph{vector processing}, onde os
+operandos são vetoriais ao invés escalares como no modelo tradicional. Este
+tipo de processamento é bastante útil para computação científica em
+supercomputadores, onde uma instrução pode operar sobre centenas de valores
+simultaneamente.
+
+No AltiVec, porém, o foco é a operação sobre vetores pequenos, geralmente de
+três ou quatro dimensões. Este uso contempla os casos comuns de processamento
+gráfico em computadores desktop, como operações sobre \emph{pixels} RGB e
+cálculos de geometria para gráficos tridimensionais.
+
+\tech{ArchC} é uma linguagem, baseada em SystemC, usada para definir conjuntos
+de instruções, registradores, comportamentos, hierarquia de memória, pipelines
+de um processador, descrevendo assim de maneira completa uma arquitetura. A
+partir desta descrição podem-se gerar automaticamente simuladores e assemblers,
+facilitando muito os processos de projeto e experimentação.
+
+O objetivo do trabalho é incluir as instruções e os registradores do AltiVec no
+modelo ArchC do PowerPC e construir uma bateria de testes automática para
+verificar a implementação construída.
+
+
+\section{Atividades do Projeto}
+
+\subsection{\emph{Bootstrap} da infraestrutura}
+
+Instalar e entender os componentes necessários para desenvolver o modelo,
+basicamente a biblioteca SystemC, o ArchC, e o modelo para PowerPC disponível
+no ArchC. Executar testes simples utilizando o conjunto de instruções do
+PowerPC (sem AltiVec), utilizar tanto Assembly quanto C para esses testes.
+Entender como é feita a modelagem do processador PowerPC no ArchC, e as
+estruturas básicas que mantém o estado do processador.  Essa atividade é
+essencial para depois estendermos o modelo para incluir os registradores
+AltiVec no estado interno do processador.
+
+
+\subsection{Inclusão das instruções e registradores AltiVec no modelo}
+
+Uma atividade importante é incluir logo de início todas as instruções no modelo
+do PowerPC e uma primeira aproximação de como os registradores serão
+armazenados no estado interno do modelo. Descobrir a melhor forma de incluir
+isto é parte desta atividade, eventualmente prevendo a possibilidade de
+instruções com implementações parecidas. Incluir em cada instrução uma
+implementação vazia, que permita que ela seja executada mas não faça nada, para
+que os testes pelo menos terminem a execução (mesmo tendo resultados errados
+para as instruções AltiVec).
+
+
+\subsection{Desenvolvimento de testes}
+
+Desenvolver uma série de programas simples em Assembly com objetivo de testar
+as instruções AltiVec. Em muitos casos será feita uma comparação do resultado
+da execução de cada instrução AltiVec com o mesmo cálculo sendo feito
+utilizando apenas instruções PowerPC comuns. É essencial que essa bateria de
+testes possa ser executada através de um script ou similar para que possa ser
+continuamente executada. Um pouco de conhecimento sobre as instruções PowerPC e
+AltiVec são essenciais para esta tarefa. Idealmente ela deve ocorrer em
+paralelo com as implementações.
+
+O objetivo dessa atividade não é criar todos os testes, mas prover pelo menos
+alguns testes mínimos para cada instrução do AltiVec, descrevendo o melhor
+possível o comportamento esperado. A idéia é que quando possível, mais de uma
+pessoa conheça cada instrução.
+
+Se houver tempo na fase final, seria interessante compilar um programa real que
+utilize otimizações AltiVec ou modificar um para utiliza-las e acompanhar o
+funcionamento. Não necessariamente a execução dele será mais rápida, mas o
+importante seria a corretude da execução. A viabilidade dessa sub-atividade
+precisa ser re-avaliada após a segunda entrega do projeto.
+
+
+\subsection{Implementação das instruções}
+
+Consiste na implementação de cada uma das instruções já criadas anteriormente.
+No melhor caso, quem estiver implementando, já contará com alguns testes
+prontos feitos em outra atividade e uma primeira aproximação dos registradores
+AltiVec. São ao todo 152 instruções divididas nos seguintes grupos:
+
+\begin{itemize}
+\item Vector Storage Access (10 instruções)
+\begin{itemize}
+  \item  Vector Load (4)
+  \item  Vector Store (4)
+  \item  Vector Alignment Support (2)
+\end{itemize}
+
+\item Vector Permuting and Formatting (32 instruções)
+\begin{itemize}
+  \item Vector Pack and Unpack (15)
+  \item Vector Merge (6)
+   \item Vector Splat (5)
+   \item Vector Permute (1)
+   \item Vector Select (1)
+   \item  Vector Shift (5)
+\end{itemize}
+
+\item Vector Integer (86 instruções)
+ \begin{itemize}
+   \item Vector Integer Arithmetic - Add (10)
+   \item Vector Integer Arithmetic - Subtract (10)
+   \item Vector Integer Arithmetic - Multiply (8)
+   \item Vector Integer Arithmetic - Multiply-Add/Sum (9)
+   \item Vector Integer Arithmetic - Sum-Across (5)
+   \item Vector Integer Arithmetic - Average (6)
+   \item Vector Integer Arithmetic - Maximum and Minimum (12)
+   \item Vector Integer Compare (9)
+   \item Vector Logical (5)
+   \item Vector Integer Rotate and Shift (12)
+\end{itemize}
+
+\item Vector Floating-Point (22 instruções)
+\begin{itemize}
+   \item Vector Floating-Point Arithmetic (4)
+   \item Vector Floating-Point Maximum and Minimum (2)
+   \item Vector Floating-Point Rounding and Conversion (8)
+   \item Vector Floating-Point Compare (4)
+   \item Vector Floating-Point Estimate (4)
+\end{itemize}
+
+\item Vector Status and Control Register (2 instruções)
+
+\end{itemize}
+
+Eventualmente durante a implementação, novos testes para determinada instrução
+podem surgir, ou mesmo testes criados na atividade de testes podem ser
+modificados caso seja identificada alguma discordância com a especificação.
+
+
+\subsection{Integração final}
+
+Avaliar o que foi feito e o que não pôde ser concluído, identificando os
+motivos. Revisar os arquivos criados durante o projeto, deixá-los em \emph{boa
+forma} para a entrega final, isto é, suficientemente comentados e coerentemente
+formatados.
+
+
+
+\section{Planejamento}
+
+O planejamento para as fases mais avançadas está menos específico quanto a quem
+fará o quê pois vamos experimentar esse tipo de divisão de trabalho na Fase 2.
+A especificação de que instruções serão feitas na Fase 2 é vaga (apenas o
+objetivo de fazer 32) pois nessa fase também iremos conhecer as instruções com
+detalhe e entender quais são as mais complexas. A idéia é pelo menos ter alguma
+forma de Load/Store nessa fase para viabilizar os testes. O planejamento então
+será atualizado com mais detalhes quanto a quais grupos de instrução serão
+implementados nas fases posteriores.
+
+\subsection{Fase 1}
+
+\begin{itemize}
+
+\item Pesquisa inicial sobre AltiVec para familiarização com o tema do projeto.
+\who{todos}
+
+\item Desenvolvimento da versão inicial da especificação para \textbf{Entrega 1
+-- 15/Maio}. \who{todos}
+
+\end{itemize}
+
+
+\subsection{Fase 2}
+
+\begin{itemize}
+
+\item Bootstrap de infraestrutura. Mesmo que todos não usem ambientes de
+trabalho diferentes do IC (que terá infraestrutura necessária) todos devem se
+familiarizar com a infraestrutura do ArchC e como o modelo PowerPC funciona.
+\who{todos}
+
+\item Começa e termina a atividade de inclusão das instruções no modelo.
+\who{Caio, Ribamar}
+
+\item Começa a atividade de desenvolvimento de testes. \who{Helder, Tarcísio}
+
+\item Começa a atividade de implementação, previsão de 32 instruções, pelo
+menos um par Load/Store para facilitar testes. \who{todos, aprox. 8 cada}
+
+\item \textbf{Entrega 2 -- 29/Maio}, contendo uma versão com \textbf{32}
+instruções funcionando e testes para elas, e um relato do que foi desenvolvido
+durante a Fase 2, e um planejamento mais preciso dos grupos de instrução para
+Fase 3 e 4.
+
+\end{itemize}
+
+
+\subsection{Fase 3}
+
+\begin{itemize}
+
+\item Durante essa fase termina o desenvolvimento de testes. \who{1 ou 2
+pessoas}
+
+\item Continua a atividade de implementação, implementando mais instruções.
+Focar nos grupos de instruções mais complicados. \who{todos, menos instruções
+para quem estiver nos testes}
+
+\item \textbf{Entrega 3 -- 12/Junho}, contendo uma versão com \textbf{112}
+instruções funcionando e testes para elas, e um relato do que foi desenvolvido
+durante a Fase 3.\who{todos}
+
+\end{itemize}
+
+
+\subsection{Fase 4}
+
+\begin{itemize}
+
+\item Continua a atividade de implementação, implementando as instruções
+restantes. \who{todos, menos para quem estiver fazendo teste opcional se
+houver}
+
+\item Começa e termina a atividade de integração final. \who{todos}
+
+\item \emph{(opcional)} Se houver tempo, testar a execução de um programa real
+que use AltiVec. \who{1 pessoa}
+
+\item \textbf{Entrega 4 -- 26/Junho}, contendo uma versão com todas
+\textbf{152} instruções funcionando e testes para elas, e um relato do que foi
+desenvolvido durante a Fase 4. \who{todos}
+
+\end{itemize}
+
+
+\begin{thebibliography}{10}
+
+%professores não gostam de linque de internet :-(
+
+% os de computação precisam aturar, mas eh melhor quando é link para artigo,
+% mas ai nem poe link tb ehehe.
+\bibitem{unroll} Peter Seebach. {\em Unrolling AltiVec}, three-part article at
+IBM developerWorks.  http://www-128.ibm.com/developerworks/library/pa-altivec1/
+
+% Professores não gostam de Wikipedia :-(
+\bibitem{wikipedia} Contributors of Wikipedia. {\em AltiVec} article,
+2007-05-14. http://en.wikipedia.org/wiki/AltiVec
+
+\bibitem{powerisa} IBM. {\em PowerPC ISA}, especificação das instruções de
+vetorização cap 5.
+http://atum.caco.ic.unicamp.br/~ribamar/PowerISA\_203.Public.pdf
+
+
+
+\end{thebibliography}
+
+\end{document}
+
+%:wq

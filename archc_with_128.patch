@@ -1,0 +1,99 @@
+diff --git a/src/aclib/ac_storage/Makefile.am b/src/aclib/ac_storage/Makefile.am
+index 191f048..97ef0a1 100644
+--- a/src/aclib/ac_storage/Makefile.am
++++ b/src/aclib/ac_storage/Makefile.am
+@@ -7,6 +7,6 @@ INCLUDES = -I. -I$(top_srcdir)/src/aclib/ac_decoder -I$(top_srcdir)/src/aclib/ac
+ noinst_LTLIBRARIES = libacstorage.la
+ 
+ ## ArchC library includes
+-pkginclude_HEADERS = ac_cache.H ac_storage.H ac_ptr.H ac_regbank.H ac_inout_if.H ac_sync_reg.H ac_reg.H ac_mem.H ac_cache_if.H ac_memport.H
++pkginclude_HEADERS = ac_cache.H ac_storage.H ac_ptr.H ac_regbank.H ac_inout_if.H ac_sync_reg.H ac_reg.H ac_mem.H ac_cache_if.H ac_memport.H ac_multireg.H
+ 
+ libacstorage_la_SOURCES = ac_storage.cpp
+diff --git a/src/aclib/ac_storage/ac_multireg.H b/src/aclib/ac_storage/ac_multireg.H
+new file mode 100644
+index 0000000..c982d69
+--- /dev/null
++++ b/src/aclib/ac_storage/ac_multireg.H
+@@ -0,0 +1,29 @@
++// Class for "multiword" registers
++
++#ifndef _AC_MULTIREG_H
++#define _AC_MULTIREG_H
++
++template <typename W, int N>
++class ac_multireg {
++  public:
++    W data[N];
++
++    ac_multireg() { ac_multireg(0); };
++    
++    // Here for initialization with (0)
++    ac_multireg(int copy) {
++      int i;
++      for (i = 0; i < N; i++) {
++        data[i] = 0;
++      }
++    };
++
++    ac_multireg(const ac_multireg & copy) {
++      int i;
++      for (i = 0; i < N; i++) {
++        data[i] = copy.data[i];
++      }
++    };
++};
++
++#endif
+diff --git a/src/acsim/acsim.c b/src/acsim/acsim.c
+index a47cf1f..92d0dfb 100644
+--- a/src/acsim/acsim.c
++++ b/src/acsim/acsim.c
+@@ -501,6 +501,7 @@ int main(int argc, char** argv) {
+     fprintf( output, "#include  \"ac_memport.H\"\n");
+     fprintf( output, "#include  \"ac_regbank.H\"\n");
+     fprintf( output, "#include  \"ac_reg.H\"\n");
++    fprintf( output, "#include  \"ac_multireg.H\"\n");
+ 
+     if (HaveTLMPorts)
+       fprintf(output, "#include  \"ac_tlm_port.H\"\n");
+@@ -559,6 +560,9 @@ int main(int argc, char** argv) {
+ 	    case 64:
+ 	      fprintf( output, "%sac_reg<unsigned long long> %s;\n", INDENT[1], pstorage->name);
+ 	      break;
++      case 128:
++        fprintf( output, "%sac_reg<ac_multireg<unsigned long, 4> > %s; \n", INDENT[1], pstorage->name);
++        break;
+ 	    default:
+ 	      AC_ERROR("Register width not supported: %d\n", pstorage->width);
+ 	      break;
+@@ -584,6 +588,9 @@ int main(int argc, char** argv) {
+ 	case 64:
+ 	  fprintf( output, "%sac_regbank<%d, unsigned long long, unsigned long> %s;\n", INDENT[1], pstorage->size, pstorage->name);
+ 	  break;
++	case 128:
++	  fprintf( output, "%sac_regbank<%d, ac_multireg<unsigned long, 4>, ac_multireg<unsigned long, 4> > %s;\n", INDENT[1], pstorage->size, pstorage->name);
++	  break;
+ 	default:
+ 	  AC_ERROR("Register width not supported: %d\n", pstorage->width);
+ 	  break;
+@@ -787,6 +794,9 @@ int main(int argc, char** argv) {
+ 	    case 64:
+ 	      fprintf( output, "%sac_reg<unsigned long long>& %s;\n", INDENT[1], pstorage->name);
+ 	      break;
++	    case 128:
++	      fprintf( output, "%sac_reg<ac_multireg<unsigned long, 4> >& %s;\n", INDENT[1], pstorage->name);
++	      break;
+ 	    default:
+ 	      AC_ERROR("Register width not supported: %d\n", pstorage->width);
+ 	      break;
+@@ -812,6 +822,9 @@ int main(int argc, char** argv) {
+ 	case 64:
+ 	  fprintf( output, "%sac_regbank<%d, unsigned long long, unsigned long long>& %s;\n", INDENT[1], pstorage->size, pstorage->name);
+ 	  break;
++  case 128:
++	  fprintf( output, "%sac_regbank<%d, ac_multireg<unsigned long, 4>, ac_multireg<unsigned long, 4> >& %s;\n", INDENT[1], pstorage->size, pstorage->name);
++	  break;
+ 	default:
+ 	  AC_ERROR("Register width not supported: %d\n", pstorage->width);
+ 	  break;

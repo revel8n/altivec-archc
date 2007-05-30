@@ -1,0 +1,14 @@
+
+compilando a maquina divina:
+acsim powerpc.ac -abi && make -f Makefile.archc clean && make -f Makefile.archc
+
+
+
+compilando um programa && gerando seu assembler para conferir:
+powerpc-elf-gcc -O0 --specs=archc teste.c && powerpc-elf-gcc -O0 --specs=archc -S teste.c
+
+
+rodando la parada:
+./powerpc.x --load=a.out
+
+
