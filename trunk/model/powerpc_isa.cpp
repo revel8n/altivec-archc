@@ -3653,7 +3653,22 @@ void ac_behavior( vsr ){}
 void ac_behavior( vsro ){}
 
 //!Instruction vaddcuw behavior method.
-void ac_behavior( vaddcuw ){}
+void ac_behavior( vaddcuw ){
+    dbg_printf(" vaddcuw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint32_t sum;
+    int i;
+    for (i = 0; i < 4; i++) {
+        sum = a.data[i] + b.data[i];
+        t.data[i] = sum < a.data[i] ? 1 : 0;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vaddsbs behavior method.
 void ac_behavior( vaddsbs ){}
