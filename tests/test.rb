@@ -16,7 +16,8 @@ TESTS_HOME = ALTIVEC_HOME+'/tests'
 TESTS_CODE = TESTS_HOME+'/code'
 TESTS_BIN = TESTS_HOME+'/bin'
 TESTS_LOG = TESTS_HOME+'/log'
-FAIL_MSG_TAG = '@failure_msg'
+TEST_DESC_TAG = '@desc' # optional tag to describe the test
+
 
 
 # returns the names of the test files
@@ -124,7 +125,7 @@ def stub(instr_name)
  * IN ORDER TO BE INCLUDED IN THE AUTOMATIC BATCH TESTING
  */ 
 
-/* one-line #{FAIL_MSG_TAG}: 
+/* one-line optional description #{TEST_DESC_TAG}: 
  */
 int main() {
 

@@ -47,6 +47,264 @@ typedef unsigned int		uint32_t;
 	d3 = *uv; \
 	}
 
-	
+#define LOAD_VECTOR_UBYTE(vec, d15, d14, d13, d12, d11, d10, d9, d8, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	uint8_t *uv = (uint8_t *) 0x1000; \
+	*uv = (uint8_t) d0; \
+	uv++; \
+	*uv = (uint8_t) d1; \
+	uv++; \
+	*uv = (uint8_t) d2; \
+	uv++; \
+	*uv = (uint8_t) d3; \
+	uv++; \
+	*uv = (uint8_t) d4; \
+	uv++; \
+	*uv = (uint8_t) d5; \
+	uv++; \
+	*uv = (uint8_t) d6; \
+	uv++; \
+	*uv = (uint8_t) d7; \
+	uv++; \
+	*uv = (uint8_t) d8; \
+	uv++; \
+	*uv = (uint8_t) d9; \
+	uv++; \
+	*uv = (uint8_t) d10; \
+	uv++; \
+	*uv = (uint8_t) d11; \
+	uv++; \
+	*uv = (uint8_t) d12; \
+	uv++; \
+	*uv = (uint8_t) d13; \
+	uv++; \
+	*uv = (uint8_t) d14; \
+	uv++; \
+	*uv = (uint8_t) d15; \
+	uv -= 15; \
+	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
+}
+
+#define STORE_VECTOR_UBYTE(vec, d15, d14, d13, d12, d11, d10, d9, d8, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	uint8_t *uv = (uint8_t *) 0x2000; \
+	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
+	d0 = *uv; \
+	uv++; \
+	d1 = *uv; \
+	uv++; \
+	d2 = *uv; \
+	uv++; \
+	d3 = *uv; \
+	uv++; \
+	d4 = *uv; \
+	uv++; \
+	d5 = *uv; \
+	uv++; \
+	d6 = *uv; \
+	uv++; \
+	d7 = *uv; \
+	uv++; \
+	d8 = *uv; \
+	uv++; \
+	d9 = *uv; \
+	uv++; \
+	d10 = *uv; \
+	uv++; \
+	d11 = *uv; \
+	uv++; \
+	d12 = *uv; \
+	uv++; \
+	d13 = *uv; \
+	uv++; \
+	d14 = *uv; \
+	uv++; \
+	d15 = *uv; \
+}
+
+#define LOAD_VECTOR_UHWORD(vec, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	uint16_t *uv = (uint16_t *) 0x1000; \
+	*uv = (uint16_t) d0; \
+	uv++; \
+	*uv = (uint16_t) d1; \
+	uv++; \
+	*uv = (uint16_t) d2; \
+	uv++; \
+	*uv = (uint16_t) d3; \
+	uv++; \
+	*uv = (uint16_t) d4; \
+	uv++; \
+	*uv = (uint16_t) d5; \
+	uv++; \
+	*uv = (uint16_t) d6; \
+	uv++; \
+	*uv = (uint16_t) d7; \
+	uv++; \
+	uv -= 7; \
+	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
+}
+
+#define STORE_VECTOR_UHWORD(vec, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	uint16_t *uv = (uint16_t *) 0x2000; \
+	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
+	d0 = *uv; \
+	uv++; \
+	d1 = *uv; \
+	uv++; \
+	d2 = *uv; \
+	uv++; \
+	d3 = *uv; \
+	uv++; \
+	d4 = *uv; \
+	uv++; \
+	d5 = *uv; \
+	uv++; \
+	d6 = *uv; \
+	uv++; \
+	d7 = *uv; \
+}
+
+// ss
+
+#define LOAD_VECTOR_S(vec, d3, d2, d1, d0) { \
+	int32_t *uv = (int32_t *) 0x1000; \
+	*uv = (int32_t) d0; \
+	uv++; \
+	*uv = (int32_t) d1; \
+	uv++; \
+	*uv = (int32_t) d2; \
+	uv++; \
+	*uv = (int32_t) d3; \
+	uv -= 3; \
+	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
+	}
+
+#define STORE_VECTOR_S(vec, d3, d2, d1, d0) { \
+	int32_t *uv = (int32_t *) 0x2000; \
+	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
+	d0 = *uv; \
+	uv++; \
+	d1 = *uv; \
+	uv++; \
+	d2 = *uv; \
+	uv++; \
+	d3 = *uv; \
+	}
+
+#define LOAD_VECTOR_SBYTE(vec, d15, d14, d13, d12, d11, d10, d9, d8, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	int8_t *uv = (int8_t *) 0x1000; \
+	*uv = (int8_t) d0; \
+	uv++; \
+	*uv = (int8_t) d1; \
+	uv++; \
+	*uv = (int8_t) d2; \
+	uv++; \
+	*uv = (int8_t) d3; \
+	uv++; \
+	*uv = (int8_t) d4; \
+	uv++; \
+	*uv = (int8_t) d5; \
+	uv++; \
+	*uv = (int8_t) d6; \
+	uv++; \
+	*uv = (int8_t) d7; \
+	uv++; \
+	*uv = (int8_t) d8; \
+	uv++; \
+	*uv = (int8_t) d9; \
+	uv++; \
+	*uv = (int8_t) d10; \
+	uv++; \
+	*uv = (int8_t) d11; \
+	uv++; \
+	*uv = (int8_t) d12; \
+	uv++; \
+	*uv = (int8_t) d13; \
+	uv++; \
+	*uv = (int8_t) d14; \
+	uv++; \
+	*uv = (int8_t) d15; \
+	uv -= 15; \
+	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
+}
+
+#define STORE_VECTOR_SBYTE(vec, d15, d14, d13, d12, d11, d10, d9, d8, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	int8_t *uv = (int8_t *) 0x2000; \
+	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
+	d0 = *uv; \
+	uv++; \
+	d1 = *uv; \
+	uv++; \
+	d2 = *uv; \
+	uv++; \
+	d3 = *uv; \
+	uv++; \
+	d4 = *uv; \
+	uv++; \
+	d5 = *uv; \
+	uv++; \
+	d6 = *uv; \
+	uv++; \
+	d7 = *uv; \
+	uv++; \
+	d8 = *uv; \
+	uv++; \
+	d9 = *uv; \
+	uv++; \
+	d10 = *uv; \
+	uv++; \
+	d11 = *uv; \
+	uv++; \
+	d12 = *uv; \
+	uv++; \
+	d13 = *uv; \
+	uv++; \
+	d14 = *uv; \
+	uv++; \
+	d15 = *uv; \
+}
+
+#define LOAD_VECTOR_SHWORD(vec, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	int16_t *uv = (int16_t *) 0x1000; \
+	*uv = (int16_t) d0; \
+	uv++; \
+	*uv = (int16_t) d1; \
+	uv++; \
+	*uv = (int16_t) d2; \
+	uv++; \
+	*uv = (int16_t) d3; \
+	uv++; \
+	*uv = (int16_t) d4; \
+	uv++; \
+	*uv = (int16_t) d5; \
+	uv++; \
+	*uv = (int16_t) d6; \
+	uv++; \
+	*uv = (int16_t) d7; \
+	uv++; \
+	uv -= 7; \
+	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
+}
+
+#define STORE_VECTOR_SHWORD(vec, d7, d6, d5, d4, d3, d2, d1, d0) { \
+	int16_t *uv = (int16_t *) 0x2000; \
+	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
+	d0 = *uv; \
+	uv++; \
+	d1 = *uv; \
+	uv++; \
+	d2 = *uv; \
+	uv++; \
+	d3 = *uv; \
+	uv++; \
+	d4 = *uv; \
+	uv++; \
+	d5 = *uv; \
+	uv++; \
+	d6 = *uv; \
+	uv++; \
+	d7 = *uv; \
+}
+
+
+
 
 
