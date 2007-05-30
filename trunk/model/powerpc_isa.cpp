@@ -3771,6 +3771,7 @@ void ac_behavior( vaddubs ){
          
             bt = ba + bb;
 
+            // FIXME: Need to mark SAT bit at VSCR
             // saturate
             bt = bt < ba ? 0xFF : bt;
 
@@ -3801,6 +3802,7 @@ void ac_behavior( vadduhs ){
           
             ht = ha + hb;
 
+            // FIXME: Need to mark SAT bit at VSCR
             // saturate
             ht = ht < ha ? 0xFFFF : ht;
 
@@ -3824,6 +3826,7 @@ void ac_behavior( vadduws ){
     int i;
     for (i = 0; i < 4; i++) {
         sum = a.data[i] + b.data[i];
+        // FIXME: Need to mark SAT bit at VSCR
         // saturate
         t.data[i] = sum < a.data[i] ? 0xFFFFFFFF : sum;
     }
@@ -4388,19 +4391,84 @@ void ac_behavior( vslh ){}
 void ac_behavior( vslw ){}
 
 //!Instruction vand behavior method.
-void ac_behavior( vand ){}
+void ac_behavior( vand ){
+    dbg_printf(" vand v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = a.data[i] & b.data[i];
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vandc behavior method.
-void ac_behavior( vandc ){}
+void ac_behavior( vandc ){
+    dbg_printf(" vandc v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = a.data[i] & ~(b.data[i]);
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vnor behavior method.
-void ac_behavior( vnor ){}
+void ac_behavior( vnor ){
+    dbg_printf(" vnor v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = ~(a.data[i] | b.data[i]);
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vor behavior method.
-void ac_behavior( vor ){}
+void ac_behavior( vor ){
+    dbg_printf(" vor v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = a.data[i] | b.data[i];
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vxor behavior method.
-void ac_behavior( vxor ){}
+void ac_behavior( vxor ){
+    dbg_printf(" vxor v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = a.data[i] ^ b.data[i];
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vaddfp behavior method.
 void ac_behavior( vaddfp ){}

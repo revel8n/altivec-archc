@@ -1755,6 +1755,17 @@ AC_ISA(powerpc) {
             "bc 0xC, %0*4+2, %1";
         }
 
+        // AltiVec pseudo-instructions
+        
+        pseudo_instr("vmr %vreg, %vreg") {
+            "vor %0, %1, %1";
+        }
+
+        pseudo_instr("vnot %vreg, %vreg") {
+            "vnor %0, %1, %1";
+        }
+        
+
     };
 
 };
