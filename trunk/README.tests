@@ -1,0 +1,29 @@
+Script que pega os nomes das instruções do powerpc_isa.cpp
+e cria no diretório tests/code stubs .c para cada instrução.
+Atualmente isso acontece rodando o script. Quero fazer uma CLI
+bonitinha, tipo:
+./test create-stubs
+
+Não recomendo que rodem ele agora. Ainda tem q fazer um comandinho
+simples pra gerar novos .c pra mesma instrução.
+./test create-stub instrucao
+
+Depois vai ter uma migué de pegar todos esses .c, compilar e
+executar no simulador, vendo qtos erros deu, onde e tals.
+./test make # compila e guarda em ./bin (não sobrescreve)
+./test run # roda ./bin e guarda log em ./log (não sobrescreve)
+./test clean # esvazia ./bin e ./log
+./test run-full # clean && make && run
+
+Atualmente ele usa o mesmo stub pra todo mundo. Vou fazer um
+esquema pra poder gerar stubs pra um grupo de instrução a partir
+de um arquivo de template. Ex:
+./test create-stub instr1 instr2 [...] --template=load_and_store.c
+
+Se quiser rodar mesmo assim do jeito que tá, tem que setar o 
+env ALTIVEC_HOME, antes de rodar, pro diretório onde tá o altivec/
+do svn.
+
+IMPORTANTE: para o ./test create-stubs, o powerpc_isa.cpp deve existir
+no altivec/model/ e as instruções do altivec devem estar no final do
+arquivo, precedidas por um comentário contendo o texto 'altivec'.
