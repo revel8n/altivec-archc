@@ -4388,7 +4388,24 @@ void ac_behavior( vslb ){}
 void ac_behavior( vslh ){}
 
 //!Instruction vslw behavior method.
-void ac_behavior( vslw ){}
+void ac_behavior( vslw ){
+    dbg_printf(" vslw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint8_t sh;
+    
+    int i;
+    for (i = 0; i < 4; i++) {
+        sh = (uint8_t) (b.data[i] & 0x0000001F);
+        t.data[i] = a.data[i] << sh;
+        printf("sh=%d a=0x%08X t=0x%08X\n", sh, a.data[i], t.data[i]);
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vand behavior method.
 void ac_behavior( vand ){
