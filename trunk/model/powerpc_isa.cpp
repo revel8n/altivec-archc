@@ -3753,13 +3753,83 @@ void ac_behavior( vadduhm ){
 }
 
 //!Instruction vaddubs behavior method.
-void ac_behavior( vaddubs ){}
+void ac_behavior( vaddubs ){
+    dbg_printf(" vaddubs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t ba, bb, bt;
+    uint32_t bt32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            bt = ba + bb;
+
+            // saturate
+            bt = bt < ba ? 0xFF : bt;
+
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vadduhs behavior method.
-void ac_behavior( vadduhs ){}
+void ac_behavior( vadduhs ){
+    dbg_printf(" vadduhs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint16_t ha, hb, ht;
+    uint32_t ht32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ha = (uint16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (uint16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+          
+            ht = ha + hb;
+
+            // saturate
+            ht = ht < ha ? 0xFFFF : ht;
+
+            ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vadduws behavior method.
-void ac_behavior( vadduws ){}
+void ac_behavior( vadduws ){
+    dbg_printf(" vadduws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint32_t sum;
+    int i;
+    for (i = 0; i < 4; i++) {
+        sum = a.data[i] + b.data[i];
+        // saturate
+        t.data[i] = sum < a.data[i] ? 0xFFFFFFFF : sum;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsubcuw behavior method.
 void ac_behavior( vsubcuw ){}
