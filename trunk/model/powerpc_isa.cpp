@@ -3771,7 +3771,7 @@ void ac_behavior( vaddubs ){
          
             bt = ba + bb;
 
-            // FIXME: Need to mark SAT bit at VSCR
+            // TODO: Need to mark SAT bit at VSCR
             // saturate
             bt = bt < ba ? 0xFF : bt;
 
@@ -3802,7 +3802,7 @@ void ac_behavior( vadduhs ){
           
             ht = ha + hb;
 
-            // FIXME: Need to mark SAT bit at VSCR
+            // TODO: Need to mark SAT bit at VSCR
             // saturate
             ht = ht < ha ? 0xFFFF : ht;
 
@@ -3826,7 +3826,7 @@ void ac_behavior( vadduws ){
     int i;
     for (i = 0; i < 4; i++) {
         sum = a.data[i] + b.data[i];
-        // FIXME: Need to mark SAT bit at VSCR
+        // TODO: Need to mark SAT bit at VSCR
         // saturate
         t.data[i] = sum < a.data[i] ? 0xFFFFFFFF : sum;
     }
