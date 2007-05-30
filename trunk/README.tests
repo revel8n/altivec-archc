@@ -1,3 +1,9 @@
+ATENÇÃO: Esse arquivo se refere a geração de testes que ainda não está
+sendo utilizada. Temporariamente os testes estão em t/ e o Makefile dentro
+desse diretório deve ser utilizado.
+
+---
+
 Script que pega os nomes das instruções do powerpc_isa.cpp
 e cria no diretório tests/code stubs .c para cada instrução.
 Atualmente isso acontece rodando o script. Quero fazer uma CLI
