@@ -1,14 +1,20 @@
+ALTIVEC-ARCH
+============
 
-compilando a maquina divina:
-acsim powerpc.ac -abi && make -f Makefile.archc clean && make -f Makefile.archc
+NOTE: To use this model with ArchC you'll need to apply our patch to ArchC
+2.0beta3 tarball, rerun all autotools programs (because we changed a
+Makefile.am), recompile and reinstall. (hint: "patch -p1 < file.patch")
 
+Generating and compiling the model (acsim must be on your PATH):
 
+  $ cd model/
+  $ make
 
-compilando um programa && gerando seu assembler para conferir:
-powerpc-elf-gcc -O0 --specs=archc teste.c && powerpc-elf-gcc -O0 --specs=archc -S teste.c
+Running our test suite:
 
+  $ cd t/
+  $ make test
 
-rodando la parada:
-./powerpc.x --load=a.out
+After compiling the tests (.bin files) you can run them one by one, using
 
-
+  $ ../model/powerpc.x --load=xxxx.bin
