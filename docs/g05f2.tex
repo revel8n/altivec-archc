@@ -1,0 +1,151 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[brazil]{babel}
+\usepackage{palatino}
+\usepackage{fullpage}
+
+\newcommand{\tech}[1]{\textit{#1}}
+\newcommand{\who}[1]{\textbf{ (#1)}}
+
+\begin{document}
+
+\title{Projeto de MC723 - Grupo 05 - Relatório da Fase 2\\ Modelagem das instruções AltiVec no ArchC}
+\author{
+Caio Marcelo de Oliveira Filho, 015599 \and
+Helder dos Santos Ribeiro, 033245 \and
+Ribamar Santarosa de Sousa, 017209 \and 
+Tarcísio Genaro Rodrigues, 017391
+}
+
+\date{}
+\maketitle
+
+\section{Objetivos planejados para a fase 2}
+
+\begin{itemize}
+
+\item Bootstrap de infraestrutura. Mesmo que todos não usem ambientes de
+trabalho diferentes do IC (que terá infraestrutura necessária) todos devem se
+familiarizar com a infraestrutura do ArchC e como o modelo PowerPC funciona.
+\textbf{OK.}
+
+\item Começa e termina a atividade de inclusão das instruções no modelo.
+\textbf{OK.}
+
+\item Começa a atividade de desenvolvimento de testes. \textbf{OK.}
+
+\item Começa a atividade de implementação, previsão de 32 instruções, pelo
+menos um par Load/Store para facilitar testes. \textbf{OK.}
+
+\item \textbf{Entrega 2}, contendo uma versão com \textbf{32}
+instruções funcionando e testes para elas, e um relato do que foi desenvolvido
+durante a Fase 2, e um planejamento mais preciso dos grupos de instrução para
+Fase 3 e 4. \textbf{OK.}
+
+\end{itemize}
+
+Comentários sobre o que foi realizado:
+
+
+\subsection{\tech{Patch} para o ArchC suportar \tech{regbank} de 128 bits}
+
+Após conversa com o professor, foi dedicado um tempo para permitir bancos de
+registradores. Apesar de apertar um pouco a Fase 2, o resultado foi positivo
+pelo conhecimento que foi adquirido do funcionamento interno do ArchC.
+
+A modificação foi feita de forma a permitir futuras extensões, por exemplo:
+incluir suporte funcional a registradores de 256 bits seria trivial. Há interesse
+do grupo de discutir a solução proposta e executada com o professor para possível
+inclusão no código do ArchC.
+
+\subsection{Instruções implementadas}
+
+A meta de 32 instruções implementadas foi atingida. O foco principal foram as
+instruções de Load/Store, um subconjunto das instruções de somas vetoriais
+(para \tech{bytes}, \tech{halfwords} e \tech{words}), instruções de máximo e
+mínimo, e operadores lógicos. Essa amostragem foi abrangente o suficiente para
+dar uma noção do escopo das instruções do AltiVec.
+
+Pelo menos 32 instruções tem testes exercitando o funcionamento básico. Os
+testes foram escritos em C com \tech{inline assembly} para chamar as instruções
+a serem testadas. No momento o foco é no comportamento de cada uma das
+instruções (apesar de todos testes dependerem de alguma forma de Load/Store).
+Além disso foi feito um teste envolvendo o uso das instrínsicas do GCC para
+manipulação de vetores numéricos. Este último abre caminho para futuras
+experiências com as opções de auto-vetorização do GCC.
+
+A experiência com as instruções também será útil para na próxima fase ser feito
+um esforço de refatorar um pouco o código e tentar minimizar a repetição de
+código em diversos lugares. O AltiVec possui \tech{padrões} de instrução
+bastante parecidos e um esforço para abstraí-los seria proveitoso.
+
+
+\section{Próximas fases}
+
+Durante a fase 2 constatou-se que há mais instruções do que tinhamos contado no
+planejamento anterior. A contagem que entendemos no momento é de 161
+instruções. As metas de instruções serão re-feitas com base neste novo número.
+
+O plano básico para as próximas fases continua o mesmo. Porem duas novas
+subatividades apareceram: a primeira é um esforço por parte dos implementadores
+de analisar o código das instruções globalmente e tentar refatorar partes
+repetidas. Esse esforço terá efeito positivo nas duas próximas fases, então uma
+certa folga na meta de instruções será dada a parte de implementação na fase 3
+para simplificar a implementação na fase 4.
+
+A segunda subatividade é, no contexto de testes, seria testar se otimizações de
+autovetorização incluídas no GCC 4.x geram código que funciona no nosso modelo.
+Esse novo teste seria \emph{opcional} e possivelmente ficaria no lugar do teste
+de um programa real. Sugestões nessa área são bem-vindas.
+
+A última modificação feita é que vamos estender o prazo da atividade de
+desenvolvimento de testes para a Fase 4. A consequência disso é que não mais
+teremos todos os testes terminados no fim da Fase 3. O motivo é, apesar de ser
+extremamente útil já ter os testes prontos na implementação, o fato do prazo
+ser curto e de todos terem que passar pela implementação das instruções torna
+mais conveniente que os testes sejam feitos em conjunto com as instruções.
+
+\subsection{Fase 3}
+
+\begin{itemize}
+
+\item Durante essa fase continua o desenvolvimento de testes. \who{todos}
+
+\item Continua a atividade de implementação, implementando mais instruções.
+Focar nos grupos de instruções mais complicados. \who{todos, dividindo
+em grupos funcionais de instruções}
+
+\item \textbf{Entrega 3 -- 12/Junho}, contendo uma versão com \textbf{91}
+instruções funcionando e testes para elas, e um relato do que foi desenvolvido
+durante a Fase 3.\who{todos}
+
+\end{itemize}
+
+
+\subsection{Fase 4}
+
+\begin{itemize}
+
+\item Durante essa fase termina o desenvolvimento de testes. \who{todos}
+
+\item Continua a atividade de implementação, implementando as instruções
+restantes. \who{todos, menos para quem estiver fazendo teste opcional se
+houver}
+
+\item Começa e termina a atividade de integração final. \who{todos}
+
+\item \emph{(opcional)} Se houver tempo, testar se funcionam as otimizações de
+autovetorização do GCC 4.x OU testar a execução de um programa real que use
+AltiVec. \who{1 pessoa}
+
+\item \textbf{Entrega 4 -- 26/Junho}, contendo uma versão com todas
+\textbf{161} instruções funcionando e testes para elas, e um relato do que foi
+desenvolvido durante a Fase 4. \who{todos}
+
+\end{itemize}
+
+\end{document}
+
+%:wq
