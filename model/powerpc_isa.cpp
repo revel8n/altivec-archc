@@ -3374,7 +3374,7 @@ void ac_behavior( lvehx ){
     uint16_t eb = ea & (0x000F);
 
     printf("lvehx: ea = %d, eb = %d\n", ea, eb);
-    printf("lvehx: dado lido byte: 0x%08x\n", (uint16_t) MEM.read_half(ea));
+    printf("lvehx: dado lido halfword: 0x%04x\n", (uint16_t) MEM.read_half(ea));
 
     /* 'eb >> 2' tells what word the value is and
      * 'eb & 0x3' tells what byte inside the word,
@@ -3385,7 +3385,7 @@ void ac_behavior( lvehx ){
     int half_pos = (eb & 0x3) >> 1;
 
     vec temp;
-    temp.data[word_pos] = ((uint32_t) MEM.read_half(ea)) << (16 * half_pos);
+    temp.data[word_pos] = ((uint32_t) MEM.read_half(ea)) << (16 * (7 - half_pos));
     printf("lvehx: word final construida: 0x%08x\n", (uint32_t) temp.data[word_pos]);
     VR.write(vrt, temp);
 }
