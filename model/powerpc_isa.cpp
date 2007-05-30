@@ -3344,7 +3344,7 @@ void ac_behavior( lvebx ) {
     short int eb = ea & (0x000F);
 
     printf("lvebx: ea = %d, eb = %d\n", ea, eb);
-    printf("lvebx: dado lido byte: 0x%08x\n", (unsigned char) MEM.read_byte(ea));
+    printf("lvebx: dado lido byte: 0x%02x\n", (unsigned char) MEM.read_byte(ea));
 
     /* 'eb >> 2' tells what word the value is and
      * 'eb & 0x3' tells what byte inside the word
@@ -3354,7 +3354,7 @@ void ac_behavior( lvebx ) {
     int byte_pos = eb & 0x3;
 
     vec temp;
-    temp.data[word_pos] = ((unsigned long) MEM.read_byte(ea)) << (8 * byte_pos);
+    temp.data[word_pos] = ((unsigned long) MEM.read_byte(ea)) << (8 * (3 - byte_pos));
     printf("lvebx: word final construida: 0x%08x\n", (unsigned long) temp.data[word_pos]);
     VR.write(vrt, temp);
 }
