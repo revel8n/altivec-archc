@@ -1,4 +1,3 @@
-
 = Altivec =
 
 The ArchC Architecture Description Language: 
@@ -10,7 +9,7 @@ http://atum.caco.ic.unicamp.br/~ribamar/PowerISA_203.Public.pdf
 
 = Details =
 
-These are the instructions group we're implementing (starting in the specification's pdf page 160):
+These are the instructions section we're implementing (starting in the specification's pdf page 160):
 
 {{{
  5.7 - Vector Storage Access Instructions.
@@ -20,7 +19,7 @@ These are the instructions group we're implementing (starting in the specificati
  5.11 - Vector Status and Control Register Instructions.  
 }}}
 
-These instructions can be splited as this:
+These sections can be splited as this:
 
 {{{
  5.7 - Vector Storage Access Instructions.
