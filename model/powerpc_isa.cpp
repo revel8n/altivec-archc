@@ -3903,6 +3903,8 @@ void ac_behavior( vsum4shs ){}
 //!Instruction vsum4ubs behavior method.
 void ac_behavior( vsum4ubs ){}
 
+// ****** Integer Maximum Instructions. 
+
 //!Instruction vavgsb behavior method.
 void ac_behavior( vavgsb ){}
 
@@ -3919,7 +3921,25 @@ void ac_behavior( vavgub ){}
 void ac_behavior( vavguh ){}
 
 //!Instruction vavguw behavior method.
-void ac_behavior( vavguw ){}
+void ac_behavior( vavguw ){
+
+    dbg_printf("vavguw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0 ; i < 4; i++){
+        uint64_t sum = a.data[i] + b.data[i]; 
+        sum++; 
+        t.data[i] = sum >> 1; 
+        //printf("0x%x + 0x%x = 0x%x / 2 \n", a.data[i], 
+        printf("(%u + %u)/2 = %u \n", a.data[i], 
+                               b.data[i], t.data[i]); 
+    }
+
+    VR.write(vrt, t); 
+}
 
 // ****** Integer Maximum Instructions. 
 
