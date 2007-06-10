@@ -3906,9 +3906,61 @@ void ac_behavior( vsum4ubs ){}
 // ****** Integer Maximum Instructions. 
 
 //!Instruction vavgsb behavior method.
-void ac_behavior( vavgsb ){}
+// Vector Average Signed Byte - powerisa spec pag 169. 
+void ac_behavior( vavgsb ){
+    dbg_printf("vavgsb v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0; i < 4; i++){
+        int k = 8 ;  //  shifts de sizeof(BYTE). 
+        int8_t a_i_0 =  (int8_t) ((a.data[i] << 3*k) >> 3*k); 
+        int8_t a_i_1 =  (int8_t) ((a.data[i] << 2*k) >> 3*k); 
+        int8_t a_i_2 =  (int8_t) ((a.data[i] << 1*k) >> 3*k); 
+        int8_t a_i_3 =  (int8_t) ((a.data[i] << 0  ) >> 3*k); 
+        int8_t b_i_0 =  (int8_t) ((b.data[i] << 3*k) >> 3*k); 
+        int8_t b_i_1 =  (int8_t) ((b.data[i] << 2*k) >> 3*k); 
+        int8_t b_i_2 =  (int8_t) ((b.data[i] << 1*k) >> 3*k); 
+        int8_t b_i_3 =  (int8_t) ((b.data[i] << 0  ) >> 3*k); 
+        int8_t t_0 =  int8_t ( (((int16_t)a_i_0 + (int16_t)b_i_0)+1) >> 1); 
+        int8_t t_1 =  int8_t ( (((int16_t)a_i_1 + (int16_t)b_i_1)+1) >> 1); 
+        int8_t t_2 =  int8_t ( (((int16_t)a_i_2 + (int16_t)b_i_2)+1) >> 1); 
+        int8_t t_3 =  int8_t ( (((int16_t)a_i_3 + (int16_t)b_i_3)+1) >> 1); 
+
+        uint64_t t_i = ((uint64_t)t_3 << 3*k) + ((uint32_t)t_2 << 2*k) 
+                     + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf("(a_0 = %ld + b_0 = %ld)/ 2 = %ld\n ", 
+                       a_i_0, 
+                       b_i_0, 
+                         t_0); 
+        printf("(a_1 = %ld + b_1 = %ld)/ 2 = %ld\n ", 
+                       a_i_1, 
+                       b_i_1, 
+                         t_1); 
+        printf("(a_2 = %ld + b_2 = %ld)/ 2 = %ld\n ", 
+                       a_i_2, 
+                       b_i_2, 
+                         t_2); 
+        printf("(a_3 = %ld + b_3 = %ld)/ 2 = %ld\n ", 
+                       a_i_3, 
+                       b_i_3, 
+                         t_3); 
+        printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
+                                      (unsigned char) t_2, 
+                                      (unsigned char) t_1,
+                                      (unsigned char) t_0); 
+        printf("t_i = %X \n\n ", t_i); 
+                      //(unsigned char) b_i_3, 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vavgsh behavior method.
+// Vector Average Signed Halfword - powerisa spec pag 169. 
 void ac_behavior( vavgsh ){
 
     dbg_printf("vavgsh v%d, v%d, v%d\n\n", vrt, vra, vrb);
@@ -3971,6 +4023,7 @@ void ac_behavior( vavgub ){
 
     for (int i = 0; i < 4; i++){
         int k = 8 ;  //  shifts de sizeof(BYTE). 
+        //FIXME: these should be "uint8_t", but int8_t doesn't hurt anyway.
         int8_t a_i_0 =  (int8_t) ((a.data[i] << 3*k) >> 3*k); 
         int8_t a_i_1 =  (int8_t) ((a.data[i] << 2*k) >> 3*k); 
         int8_t a_i_2 =  (int8_t) ((a.data[i] << 1*k) >> 3*k); 
