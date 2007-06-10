@@ -12,6 +12,9 @@ all: $(tests)
 clean: 
 	-rm -f *.bin *.s
 
+count: $(tests)
+	 @make test | grep -v '^---$$' | grep -v '^     CC' |  sed -e 's/.* \(.*\)-.*/\1/' | uniq | grep -v gcc | wc -l
+
 ../model/powerpc.x:
 	@echo Vai compilar o modelo :-P
 	@false
