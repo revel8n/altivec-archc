@@ -3915,7 +3915,57 @@ void ac_behavior( vavgsh ){}
 void ac_behavior( vavgsw ){}
 
 //!Instruction vavgub behavior method.
-void ac_behavior( vavgub ){}
+void ac_behavior( vavgub ){
+
+    dbg_printf("vavgub v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0; i < 4; i++){
+        int k = 8 ;  //  shifts de sizeof(BYTE). 
+        int8_t a_i_0 =  (int8_t) ((a.data[i] << 3*k) >> 3*k); 
+        int8_t a_i_1 =  (int8_t) ((a.data[i] << 2*k) >> 3*k); 
+        int8_t a_i_2 =  (int8_t) ((a.data[i] << 1*k) >> 3*k); 
+        int8_t a_i_3 =  (int8_t) ((a.data[i] << 0  ) >> 3*k); 
+        int8_t b_i_0 =  (int8_t) ((b.data[i] << 3*k) >> 3*k); 
+        int8_t b_i_1 =  (int8_t) ((b.data[i] << 2*k) >> 3*k); 
+        int8_t b_i_2 =  (int8_t) ((b.data[i] << 1*k) >> 3*k); 
+        int8_t b_i_3 =  (int8_t) ((b.data[i] << 0  ) >> 3*k); 
+        uint8_t t_0 =  uint8_t ( (((uint16_t)a_i_0 + (uint16_t)b_i_0)+1) >> 1); 
+        uint8_t t_1 =  uint8_t ( (((uint16_t)a_i_1 + (uint16_t)b_i_1)+1) >> 1); 
+        uint8_t t_2 =  uint8_t ( (((uint16_t)a_i_2 + (uint16_t)b_i_2)+1) >> 1); 
+        uint8_t t_3 =  uint8_t ( (((uint16_t)a_i_3 + (uint16_t)b_i_3)+1) >> 1); 
+
+        uint64_t t_i = ((uint64_t)t_3 << 3*k) + ((uint32_t)t_2 << 2*k) 
+                     + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf("(a_0 = %#x + b_0 = %#x)/ 2 = %#x\n ", 
+                      (unsigned char) a_i_0, 
+                      (unsigned char) b_i_0, 
+                      (unsigned char)   t_0); 
+        printf("(a_1 = %#x + b_1 = %#x)/ 2 = %#x\n ", 
+                      (unsigned char) a_i_1, 
+                      (unsigned char) b_i_1, 
+                      (unsigned char)   t_1); 
+        printf("(a_2 = %#x + b_2 = %#x)/ 2 = %#x\n ", 
+                      (unsigned char) a_i_2, 
+                      (unsigned char) b_i_2, 
+                      (unsigned char)   t_2); 
+        printf("(a_3 = %#x + b_3 = %#x)/ 2 = %#x\n ", 
+                      (unsigned char) a_i_3, 
+                      (unsigned char) b_i_3, 
+                      (unsigned char)   t_3); 
+        printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
+                                      (unsigned char) t_2, 
+                                      (unsigned char) t_1,
+                                      (unsigned char) t_0); 
+        printf("t_i = %X \n\n ", t_i); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vavguh behavior method.
 // Vector Average Unsigned Halfword - powerisa spec pag 170. 
