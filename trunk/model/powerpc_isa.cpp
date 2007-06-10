@@ -3912,9 +3912,29 @@ void ac_behavior( vavgsb ){}
 void ac_behavior( vavgsh ){}
 
 //!Instruction vavgsw behavior method.
-void ac_behavior( vavgsw ){}
+// Vector Average Signed Word - powerisa spec pag 170. 
+void ac_behavior( vavgsw ){
+
+    dbg_printf("vavgsw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0; i <  4; i++){
+        int32_t a_i =  (int32_t) a.data[i]; 
+        int32_t b_i =  (int32_t) b.data[i]; 
+        int64_t t_i =  int64_t ( (((int64_t)a_i + (int64_t)b_i) + 1) >> 1); 
+        t.data[i] = (uint64_t) t_i; 
+        //dbg_printf: 
+        printf("((%ld) + (%ld))/2 = %ld \t", a_i, b_i, t_i); 
+        printf("t.data[i] = %ld \n", t.data[i]);
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vavgub behavior method.
+// Vector Average Unsigned Byte - powerisa spec pag 170. 
 void ac_behavior( vavgub ){
 
     dbg_printf("vavgub v%d, v%d, v%d\n\n", vrt, vra, vrb);
@@ -4101,7 +4121,7 @@ void ac_behavior( vmaxsh ){
                       (unsigned short) b_i_0); 
         printf("t = {%X,%X}, ", (unsigned short) t_1, 
                                       (unsigned short) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        printf("t_i = %X \n\n", t_i); 
     }
     VR.write(vrt, t); 
 }
