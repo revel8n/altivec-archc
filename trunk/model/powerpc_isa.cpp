@@ -3909,10 +3909,36 @@ void ac_behavior( vsum4ubs ){}
 void ac_behavior( vavgsb ){}
 
 //!Instruction vavgsh behavior method.
-void ac_behavior( vavgsh ){}
+void ac_behavior( vavgsh ){
+
+    dbg_printf("vavgsh v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        int16_t a_i_0 = (int16_t) ((a.data[i] << k) >> k); 
+        int16_t a_i_1 = (int16_t) ((a.data[i] << 0) >> k); 
+        int16_t b_i_0 = (int16_t) ((b.data[i] << k) >> k); 
+        int16_t b_i_1 = (int16_t) ((b.data[i] << 0) >> k); 
+        //uint16_t t_0 = (uint16_t) ( (((int32_t)a_i_0 + (int32_t)b_i_0)+1) >> 1);
+        //uint16_t t_1 = (uint16_t) ( (((int32_t)a_i_1 + (int32_t)b_i_1)+1) >> 1); 
+        int16_t t_0 = (int16_t) ( (((int32_t)a_i_0 + (int32_t)b_i_0)+1) >> 1);
+        int16_t t_1 = (int16_t) ( (((int32_t)a_i_1 + (int32_t)b_i_1)+1) >> 1); 
+        uint64_t t_i =  ((uint32_t)t_1 <<  k) +  (uint16_t)t_0 ; 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_0, b_i_0, (signed long)t_0); 
+        printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_1, b_i_1, (signed long)t_1); 
+        printf("t_0 = %#x t_1 = %#x, t_i = %#x \n\n", t_0, t_1, t_i); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vavgsw behavior method.
-// Vector Average Signed Word - powerisa spec pag 170. 
+// Vector Average Signed Word - powerisa spec pag 169. 
 void ac_behavior( vavgsw ){
 
     dbg_printf("vavgsw v%d, v%d, v%d\n\n", vrt, vra, vrb);
