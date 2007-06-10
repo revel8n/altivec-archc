@@ -3938,11 +3938,11 @@ void ac_behavior( vavguh ){
         uint64_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        //FIXME: this need a better test than just using FF and 00... 
+        //printf("(%#X + %#X)/2 = %#X \n", a_i_0, b_i_0, t_0); 
+        //printf("(%#X + %#X)/2 = %#X \n", a_i_1, b_i_1, t_1); 
         printf("(%u + %u)/2 = %u \n", a_i_0, b_i_0, t_0); 
         printf("(%u + %u)/2 = %u \n", a_i_1, b_i_1, t_1); 
-        printf("t_0 = %X t_1 = %X, t_i = %X \n\n", t_i); //FIXME: this is showing
-        //a worng result. 
+        printf("t_0 = %#X t_1 = %#X, t_i = %#X \n\n", t_0, t_1, t_i); 
 
     }
 
