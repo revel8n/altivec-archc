@@ -4573,7 +4573,7 @@ void ac_behavior( vmsumshm ){}
 void ac_behavior( vmsumshs ){}
 
 //!Instruction vmsumuhm behavior method.
-// Vector Minimum Unsigned Halfword - powerisa spec pag 174.
+// Vector Multiply-Sum Unsigned Halfword Modulo - powerisa spec pag 166.
 void ac_behavior( vmsumuhm ){
 
     dbg_printf("vmsumuhm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
@@ -4610,7 +4610,53 @@ void ac_behavior( vmsumuhm ){
 }
 
 //!Instruction vmsumuhs behavior method.
-void ac_behavior( vmsumuhs ){}
+// Vector Multiply-Sum Unsigned Halfword Saturate - powerisa spec pag 166.
+void ac_behavior( vmsumuhs ){
+
+    dbg_printf("vmsumuhs v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        uint16_t a_i_0 =  (uint16_t) ((a.data[i] << k) >> k); 
+        uint16_t a_i_1 =  (uint16_t) ((a.data[i] >> k)); 
+        uint16_t b_i_0 =  (uint16_t) ((b.data[i] << k) >> k); 
+        uint16_t b_i_1 =  (uint16_t) ((b.data[i] >> k)); 
+        uint32_t c_i = c.data[i]; 
+        uint32_t t_l =  (uint32_t)a_i_0*(uint32_t)b_i_0; 
+        uint32_t t_h =  (uint32_t)a_i_1*(uint32_t)b_i_1; 
+        int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
+        // 0xffff_ffff == 2^32
+        uint32_t t_i = (uint32_t)(t_i_i > 0xffffffff ? 0xffffffff : t_i_i); 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        
+        printf("(%X*%X),(%X*%X)\n",  
+                (unsigned short)a_i_1,  
+                (unsigned short)b_i_1, 
+                (unsigned short)a_i_0, 
+                (unsigned short)b_i_0); 
+        if(t_i_i)
+        //don't know how to print 64bit hexas... 
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
+                (unsigned int)t_h, 
+                (unsigned int)t_l, 
+                (unsigned int)c_i, 
+                (unsigned long)t_i_i - 1, 
+                (unsigned int)t_i); 
+        else
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
+                (unsigned int)t_h, 
+                (unsigned int)t_l, 
+                (unsigned int)c_i, 
+                (unsigned int)t_i); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vsldoi behavior method.
 void ac_behavior( vsldoi ){}
