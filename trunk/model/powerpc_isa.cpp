@@ -4573,7 +4573,41 @@ void ac_behavior( vmsumshm ){}
 void ac_behavior( vmsumshs ){}
 
 //!Instruction vmsumuhm behavior method.
-void ac_behavior( vmsumuhm ){}
+// Vector Minimum Unsigned Halfword - powerisa spec pag 174.
+void ac_behavior( vmsumuhm ){
+
+    dbg_printf("vmsumuhm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        uint16_t a_i_0 =  (uint16_t) ((a.data[i] << k) >> k); 
+        uint16_t a_i_1 =  (uint16_t) ((a.data[i] >> k)); 
+        uint16_t b_i_0 =  (uint16_t) ((b.data[i] << k) >> k); 
+        uint16_t b_i_1 =  (uint16_t) ((b.data[i] >> k)); 
+        uint32_t c_i = c.data[i]; 
+        uint32_t t_l =   (uint32_t)a_i_0*(uint32_t)b_i_0 ; 
+        uint32_t t_h =   (uint32_t)a_i_1*(uint32_t)b_i_1 ; 
+        int32_t t_i = t_l + t_h + c_i; 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf("(%X*%X),(%X*%X)\n",  
+                (unsigned short)a_i_1,  
+                (unsigned short)b_i_1, 
+                (unsigned short)a_i_0, 
+                (unsigned short)b_i_0); 
+        printf("t_h + t_l + c_i = t_i => {%X + %X + %X = %X} \n\n", 
+                (unsigned int)t_h, 
+                (unsigned int)t_l, 
+                (unsigned int)c_i, 
+                (unsigned int)t_i); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vmsumuhs behavior method.
 void ac_behavior( vmsumuhs ){}
