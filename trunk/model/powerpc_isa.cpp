@@ -4585,7 +4585,60 @@ void ac_behavior( vmsummbm ){}
 // Vector Multiply-Sum Signed Halfword Modulo - powerisa spec pag 166.
 void ac_behavior( vmsumshm ){
 
+    dbg_printf("vmsumshm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        int16_t a_i_0  = (int16_t) ((a.data[i] << k) >> k); 
+        int16_t a_i_1  = (int16_t) ((a.data[i] >> k)); 
+        int16_t b_i_0  = (int16_t) ((b.data[i] << k) >> k); 
+        int16_t b_i_1  = (int16_t) ((b.data[i] >> k)); 
+        int32_t a_i_0s = a_i_0;
+        int32_t a_i_1s = a_i_1;
+        int32_t b_i_0s = b_i_0;
+        int32_t b_i_1s = b_i_1;
+        int32_t c_i = (int32_t)c.data[i]; 
+        int32_t t_l =  a_i_0s*b_i_0s; 
+        int32_t t_h =  a_i_1s*b_i_1s; 
+        int32_t t_i_i = ((int32_t)t_l) + ((int32_t)t_h) + ((int32_t)c_i); 
+        if(t_i_i < 0 && t_l > 0 && t_h > 0 && c_i > 0)
+            printf("crazy...\n");
+        else 
+            printf("sane (t_i_i=%ld)...\n", (signed int) t_i_i);
+        uint32_t t_i = (uint32_t) t_i_i; 
+        t.data[i] = t_i; 
+        
+        //debug information: 
+        printf("(%X*%X);(%X*%X)\n",  
+                (unsigned int)a_i_1s,  
+                (unsigned int)b_i_1s, 
+                (unsigned int)a_i_0s, 
+                (unsigned int)b_i_0s); 
+        //don't know how to print 64bit hexas... 
+        /*
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
+                (int)t_h, 
+                (int)t_l, 
+                (int)c_i, 
+                (int)t_i_i - 1, 
+                (unsigned int)t_i); 
+        */
+        //FIXME: BUG: with the test vsumshm-1.c t_i is printed negative. revision 38
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %ld}.\n\n", 
+                (signed int)t_h, 
+                (signed int)t_l, 
+                (signed int)c_i, 
+                (signed int)t_i_i - 1, 
+                (unsigned int)t_i); 
+    }
+    VR.write(vrt, t); 
 }
+
 
 //!Instruction vmsumshs behavior method.
 // Vector Multiply-Sum Signed Halfword Saturate - powerisa spec pag 166.
