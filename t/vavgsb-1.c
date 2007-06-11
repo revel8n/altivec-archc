@@ -43,5 +43,5 @@ int main() {
 	asm("vavgsb 1, 2, 3; ");
 
 
-	return *b;
+	return 0;
 }

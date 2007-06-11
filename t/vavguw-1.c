@@ -45,7 +45,7 @@ int main() {
 	//asm("vmaxsw  1, 2, 3; ");
 
 
-	return *b;
+	return 0;
 }
 /*
 	asm("li 3, 0; "

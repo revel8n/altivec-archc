@@ -2,9 +2,11 @@ int main() {
 
 	/*vra.data[0] e vrb.data[0]*/
 	int *b = (int *) 2000;
-	int vec_a[] = {0x00000001, 0x00010001, 0x00010000, 0x00000000};
+	int vec_a[] = {0x00000001, 0x00010003, 0x00010000, 0x00000000};
 	int vec_b[] = {0x00010001, 0x00010001, 0xffff0000, 0x8000ffff};
-	int vec_c[] = {0x7fffffff, 0x7ffffffd, 0x80000000, 0x80000000};
+	int vec_c[] = {0x7fffffff, 0x7ffffffe, 0x80000000, 0x80000000};
+	               /*pos_saturate, pos_sat, neg_sat, not sat. (so 
+			* it must be moduled= 0, 2, 0, -infinity  )*/
 
 	*b = vec_a[0];
 	asm( "li 2, 2000; "
@@ -56,5 +58,5 @@ int main() {
 	asm("vmsumshm 1, 2, 3, 4; ");
 
 
-	return *b;
+	return 0; 
 }
