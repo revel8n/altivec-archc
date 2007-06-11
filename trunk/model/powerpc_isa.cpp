@@ -3889,7 +3889,20 @@ void ac_behavior( vsububm ){
 }
 
 //!Instruction vsubuwm behavior method.
-void ac_behavior( vsubuwm ){}
+void ac_behavior( vsubuwm ){
+    dbg_printf(" vsubuwm v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = a.data[i] - b.data[i];
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsubuhm behavior method.
 void ac_behavior( vsubuhm ){
@@ -3919,7 +3932,35 @@ void ac_behavior( vsubuhm ){
 }
 
 //!Instruction vsububs behavior method.
-void ac_behavior( vsububs ){}
+void ac_behavior( vsububs ){
+    dbg_printf(" vsububs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t ba, bb, bt;
+    uint32_t bt32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            bt = ba - bb;
+
+            // TODO: Need to mark SAT bit at VSCR
+            // saturate
+            bt = bt > ba ? 0x00 : bt;
+
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsubuhs behavior method.
 void ac_behavior( vsubuhs ){}
