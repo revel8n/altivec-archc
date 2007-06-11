@@ -3329,6 +3329,26 @@ void ac_behavior( AV_VA1 ){}
 void ac_behavior( AV_VA2 ){}
 void ac_behavior( AV_VC ){}
 
+// Helpers
+
+// Given t and f (defined by PowerISA for vector instructions which deal with
+// CR6), update CR properly. (TODO: May need changes for float point)
+inline void CR6_update(ac_reg<ac_word> &CR, uint8_t t, uint8_t f) {
+    uint32_t cr6_mask = 0xFFFFFF0F; /* start with CR6 clean */
+    uint32_t new_cr6 = (((uint32_t) t << 3) & ((uint32_t) f << 1)) << 4;
+
+    CR.write((CR.read() & cr6_mask) | new_cr6);
+}
+
+// Set SATuration bit in VSCR
+inline void VSCR_SAT(ac_reg<ac_word> &VSCR, uint8_t sat) {
+    uint32_t sat_mask = 0xFFFFFFFE; /* start with SAT clean */
+    uint32_t new_sat = 0x00000001 & sat;
+
+    VSCR.write((VSCR.read() & sat_mask) | new_sat);
+}
+
+
 //!Instruction lvebx behavior method.
 void ac_behavior( lvebx ) {
     dbg_printf(" lvebx v%d, r%d, r%d\n\n", vrt, ra, rb);
@@ -3763,6 +3783,7 @@ void ac_behavior( vaddubs ){
     int i, j;
     uint8_t ba, bb, bt;
     uint32_t bt32;
+    int saturated = 0;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
@@ -3771,9 +3792,10 @@ void ac_behavior( vaddubs ){
          
             bt = ba + bb;
 
-            // TODO: Need to mark SAT bit at VSCR
-            // saturate
-            bt = bt < ba ? 0xFF : bt;
+            if (bt < ba) {
+                bt = 0xFF;
+                saturated++;
+            }
 
             bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
             t.data[i] |= bt32;
@@ -3781,6 +3803,7 @@ void ac_behavior( vaddubs ){
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vadduhs behavior method.
@@ -5169,7 +5192,7 @@ void ac_behavior( mtvscr ) {
 void ac_behavior( mfvscr ) {
     dbg_printf(" mfvscr v%d\n\n", vrt);
 
-    vec t;
+    vec t(0);
     t.data[3] = VSCR.read();
     VR.write(vrt, t);
 }
