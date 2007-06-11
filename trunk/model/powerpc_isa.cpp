@@ -3994,7 +3994,24 @@ void ac_behavior( vsubuhs ){
 }
 
 //!Instruction vsubuws behavior method.
-void ac_behavior( vsubuws ){}
+void ac_behavior( vsubuws ){
+    dbg_printf(" vsubuws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint32_t dif;
+    int i;
+    for (i = 0; i < 4; i++) {
+        dif = a.data[i] - b.data[i];
+        // TODO: Need to mark SAT bit at VSCR
+        // saturate
+        t.data[i] = dif > a.data[i] ? 0x000000 : dif;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmulesb behavior method.
 void ac_behavior( vmulesb ){}
