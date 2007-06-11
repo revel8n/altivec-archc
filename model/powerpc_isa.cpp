@@ -3879,7 +3879,6 @@ void ac_behavior( vsububm ){
             bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
          
             bt = ba - bb;
-            printf("vsububm: i=%d j=%d : 0x%02X - 0x%02X = 0x%02X\n", i, j, ba, bb, bt);
 
             bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
             t.data[i] |= bt32;
@@ -3893,7 +3892,31 @@ void ac_behavior( vsububm ){
 void ac_behavior( vsubuwm ){}
 
 //!Instruction vsubuhm behavior method.
-void ac_behavior( vsubuhm ){}
+void ac_behavior( vsubuhm ){
+    dbg_printf(" vsubuhm v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint16_t ha, hb, ht;
+    uint32_t ht32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ha = (uint16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (uint16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+          
+            ht = ha - hb;
+            ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vsububs behavior method.
 void ac_behavior( vsububs ){}
