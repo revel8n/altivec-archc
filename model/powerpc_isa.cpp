@@ -4654,10 +4654,14 @@ void ac_behavior( vmsumshm ){
         int32_t t_l =  a_i_0s*b_i_0s; 
         int32_t t_h =  a_i_1s*b_i_1s; 
         int32_t t_i_i = ((int32_t)t_l) + ((int32_t)t_h) + ((int32_t)c_i); 
-        if(t_i_i < 0 && t_l > 0 && t_h > 0 && c_i > 0)
+        /*
+        if((t_i_i < 0) && (t_l >= 0) && (t_h >= 0) && (c_i >= 0))
             printf("crazy...\n");
         else 
-            printf("sane (t_i_i=%ld)...\n", (signed int) t_i_i);
+            printf("sane: false that:"
+            "(%ld<0)  (%ld>0) (%ld>0) (%ld>0)\n", (signed int) t_i_i, 
+            (signed int)t_l, (signed int)t_h, (signed int)c_i );
+        */
         uint32_t t_i = (uint32_t) t_i_i; 
         t.data[i] = t_i; 
         
@@ -4676,12 +4680,11 @@ void ac_behavior( vmsumshm ){
                 (int)t_i_i - 1, 
                 (unsigned int)t_i); 
         */
-        //FIXME: BUG: with the test vsumshm-1.c t_i is printed negative. revision 38
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %ld}.\n\n", 
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %lu}.\n\n", 
                 (signed int)t_h, 
                 (signed int)t_l, 
                 (signed int)c_i, 
-                (signed int)t_i_i - 1, 
+                (signed int)t_i_i, 
                 (unsigned int)t_i); 
     }
     VR.write(vrt, t); 
