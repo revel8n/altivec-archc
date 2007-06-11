@@ -5186,11 +5186,14 @@ void ac_behavior( mtvscr ) {
     vec b = VR.read(vrb);
 
     VSCR.write(b.data[3]);
+    printf("mtvscr: isto => %X\n", b.data[3]);
 }
 
 //!Instruction mfvscr behavior method.
 void ac_behavior( mfvscr ) {
     dbg_printf(" mfvscr v%d\n\n", vrt);
+
+    printf("mfvscr: isto => %X\n", VSCR.read());
 
     vec t(0);
     t.data[3] = VSCR.read();
