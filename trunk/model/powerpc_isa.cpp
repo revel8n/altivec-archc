@@ -4726,51 +4726,71 @@ void ac_behavior( vmsumshm ){
     vec b = VR.read(vrb);
     vec c = VR.read(vrc);
 
+
     for (int i = 0; i < 4; i++){
         int k = 16 ;  //  shifts de sizeof(HALFWORD). 
         int16_t a_i_0  = (int16_t) ((a.data[i] << k) >> k); 
         int16_t a_i_1  = (int16_t) ((a.data[i] >> k)); 
         int16_t b_i_0  = (int16_t) ((b.data[i] << k) >> k); 
         int16_t b_i_1  = (int16_t) ((b.data[i] >> k)); 
-        int32_t a_i_0s = a_i_0;
-        int32_t a_i_1s = a_i_1;
-        int32_t b_i_0s = b_i_0;
-        int32_t b_i_1s = b_i_1;
+        int64_t a_i_0s = a_i_0;
+        int64_t a_i_1s = a_i_1;
+        int64_t b_i_0s = b_i_0;
+        int64_t b_i_1s = b_i_1;
         int32_t c_i = (int32_t)c.data[i]; 
-        int32_t t_l =  a_i_0s*b_i_0s; 
-        int32_t t_h =  a_i_1s*b_i_1s; 
-        int32_t t_i_i = ((int32_t)t_l) + ((int32_t)t_h) + ((int32_t)c_i); 
-        if(t_i_i < 0 && t_l > 0 && t_h > 0 && c_i > 0)
-            printf("crazy...\n");
-        else 
-            printf("sane (t_i_i=%ld)...\n", (signed int) t_i_i);
-        uint32_t t_i = (uint32_t) t_i_i; 
+        int64_t t_l =  a_i_0s*b_i_0s; 
+        int64_t t_h =  a_i_1s*b_i_1s; 
+        int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
+        bool pos_saturated = false; 
+        bool neg_saturated = false; 
+        if ( t_i_i >= 0){
+            if(t_i_i < 0) 
+                printf("* ERROR! WRONG! pos and neg!\n"); 
+            // 0x7fff_ffff  == 2^31 - 1 
+            pos_saturated = (t_i_i >  0x7fffffff); 
+        }
+        else
+            // -0x8000_0000 ==  -2^31
+            neg_saturated = (abs(t_i_i) > 0x80000000); 
+        bool saturated = pos_saturated || neg_saturated; 
+        //FIXME: change uint32_t
+        //uint32_t t_i = 
+        //        (uint32_t)(saturated ? 
+        t_i_i = (saturated ? 
+                            (pos_saturated ? 
+                               //t_i_i - 0x7fffffff: t_i_i + 0x80000000) 
+                               //t_i_i - 0x80000000: t_i_i + 0x7fffffff) 
+                               //t_i_i - 0x80000000: t_i_i + 0x80000000) 
+                               t_i_i - 0x80000000: t_i_i + 0x80000001) 
+                            : t_i_i); 
+        uint32_t t_i = (uint32_t)t_i_i;
         t.data[i] = t_i; 
-        
+
         //debug information: 
+
         printf("(%X*%X);(%X*%X)\n",  
                 (unsigned int)a_i_1s,  
                 (unsigned int)b_i_1s, 
                 (unsigned int)a_i_0s, 
                 (unsigned int)b_i_0s); 
+
+        if(saturated){
+            if(pos_saturated) printf("pos "); 
+            if(neg_saturated) printf("neg "); 
+            printf("saturated (so it must be moduled).\n"); 
+            if(pos_saturated && neg_saturated) printf("ERROR! WRONG! pos and neg!\n"); 
+        }else  printf("not saturated.\n");
         //don't know how to print 64bit hexas... 
-        /*
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
-                (int)t_h, 
-                (int)t_l, 
-                (int)c_i, 
-                (int)t_i_i - 1, 
-                (unsigned int)t_i); 
-        */
-        //FIXME: BUG: with the test vsumshm-1.c t_i is printed negative. revision 38
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %ld}.\n\n", 
-                (signed int)t_h, 
-                (signed int)t_l, 
-                (signed int)c_i, 
-                (signed int)t_i_i - 1, 
-                (unsigned int)t_i); 
+       printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X; %X}.\n\n", 
+       //printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %lu}.\n\n", 
+               (signed int)t_h, 
+               (signed int)t_l, 
+               (signed int)c_i, 
+               (signed int)t_i_i, 
+               (unsigned int)t_i); 
     }
     VR.write(vrt, t); 
+
 }
 
 
