@@ -4570,7 +4570,102 @@ void ac_behavior( vmsummbm ){}
 void ac_behavior( vmsumshm ){}
 
 //!Instruction vmsumshs behavior method.
-void ac_behavior( vmsumshs ){}
+// Vector Multiply-Sum Unsigned Halfword Saturate - powerisa spec pag 166.
+void ac_behavior( vmsumshs ){
+
+    dbg_printf("vmsumshs v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        int16_t a_i_0  = (int16_t) ((a.data[i] << k) >> k); 
+        int16_t a_i_1  = (int16_t) ((a.data[i] >> k)); 
+        int16_t b_i_0  = (int16_t) ((b.data[i] << k) >> k); 
+        int16_t b_i_1  = (int16_t) ((b.data[i] >> k)); 
+        int64_t a_i_0s = a_i_0;
+        int64_t a_i_1s = a_i_1;
+        int64_t b_i_0s = b_i_0;
+        int64_t b_i_1s = b_i_1;
+        int32_t c_i = (int32_t)c.data[i]; 
+        int64_t t_l =  a_i_0s*b_i_0s; 
+        int64_t t_h =  a_i_1s*b_i_1s; 
+        int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
+        bool pos_saturated = false; 
+        bool neg_saturated = false; 
+        if ( t_i_i >= 0){
+            if(t_i_i < 0) 
+                printf("* ERROR! WRONG! pos and neg!\n"); 
+            // 0x7fff_ffff  == 2^31 - 1 
+            pos_saturated = (t_i_i >  0x7fffffff); 
+        }
+        else
+            // -0x8000_0000 ==  -2^31
+            neg_saturated = (abs(t_i_i) > 0x80000000); 
+            //FIXME: strangely this doesn't work, can anyone explain:
+            //neg_saturated = (t_i_i < -1*0x80000000); 
+        bool saturated = pos_saturated || neg_saturated; 
+        uint32_t t_i = 
+                (uint32_t)(saturated ? 
+                            (pos_saturated ? 0x7fffffff: 0x80000000) 
+                            : t_i_i); 
+        t.data[i] = t_i; 
+        if(saturated){
+            //FIXME: undeclared function. 
+            //altivec_mark_saturation(); 
+        }
+        //debug information: 
+
+        printf("(%X*%X);(%X*%X)\n",  
+                /*
+                (unsigned short)a_i_1,  
+                (unsigned short)b_i_1, 
+                (unsigned short)a_i_0, 
+                (unsigned short)b_i_0); 
+                */
+                (unsigned int)a_i_1s,  
+                (unsigned int)b_i_1s, 
+                (unsigned int)a_i_0s, 
+                (unsigned int)b_i_0s); 
+        if(saturated){
+            if(pos_saturated) printf("pos "); 
+            if(neg_saturated) printf("neg "); 
+            printf("saturated.\n"); 
+            if(pos_saturated && neg_saturated) printf("ERROR! WRONG! pos and neg!\n"); 
+        }else  printf("not saturated.\n");
+        if(t_i_i)
+        //don't know how to print 64bit hexas... 
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
+                /*
+                (unsigned int)t_h, 
+                (unsigned int)t_l, 
+                (unsigned int)c_i, 
+                (unsigned long)t_i_i - 1, 
+                (unsigned int)t_i); 
+                */
+                (int)t_h, 
+                (int)t_l, 
+                (int)c_i, 
+                (long)t_i_i - 1, 
+                (int)t_i); 
+        else
+        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
+                /*
+                (unsigned int)t_h, 
+                (unsigned int)t_l, 
+                (unsigned int)c_i, 
+                (unsigned int)t_i); 
+                */
+                (int)t_h, 
+                (int)t_l, 
+                (int)c_i, 
+                (int)t_i); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vmsumuhm behavior method.
 // Vector Multiply-Sum Unsigned Halfword Modulo - powerisa spec pag 166.
@@ -4629,10 +4724,15 @@ void ac_behavior( vmsumuhs ){
         uint32_t c_i = c.data[i]; 
         uint32_t t_l =  (uint32_t)a_i_0*(uint32_t)b_i_0; 
         uint32_t t_h =  (uint32_t)a_i_1*(uint32_t)b_i_1; 
-        int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
+        uint64_t t_i_i = ((uint64_t)t_l) + ((uint64_t)t_h) + ((uint64_t)c_i); 
         // 0xffff_ffff == 2^32
-        uint32_t t_i = (uint32_t)(t_i_i > 0xffffffff ? 0xffffffff : t_i_i); 
+        bool saturated = (t_i_i > 0xffffffff); 
+        uint32_t t_i = (uint32_t)(saturated ? 0xffffffff : t_i_i); 
         t.data[i] = t_i; 
+        if(saturated){
+            //FIXME: undeclared function. 
+            //altivec_mark_saturation(); 
+        }
         //dbg_printf: 
         
         printf("(%X*%X),(%X*%X)\n",  
@@ -4640,6 +4740,9 @@ void ac_behavior( vmsumuhs ){
                 (unsigned short)b_i_1, 
                 (unsigned short)a_i_0, 
                 (unsigned short)b_i_0); 
+        if(saturated){
+            printf("saturated.\n"); 
+        }
         if(t_i_i)
         //don't know how to print 64bit hexas... 
         printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
