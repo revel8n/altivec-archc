@@ -4567,10 +4567,13 @@ void ac_behavior( vmsumubm ){}
 void ac_behavior( vmsummbm ){}
 
 //!Instruction vmsumshm behavior method.
-void ac_behavior( vmsumshm ){}
+// Vector Multiply-Sum Signed Halfword Modulo - powerisa spec pag 166.
+void ac_behavior( vmsumshm ){
+
+}
 
 //!Instruction vmsumshs behavior method.
-// Vector Multiply-Sum Unsigned Halfword Saturate - powerisa spec pag 166.
+// Vector Multiply-Sum Signed Halfword Saturate - powerisa spec pag 166.
 void ac_behavior( vmsumshs ){
 
     dbg_printf("vmsumshs v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
@@ -4596,6 +4599,16 @@ void ac_behavior( vmsumshs ){
         int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
         bool pos_saturated = false; 
         bool neg_saturated = false; 
+        printf("t_i_i = %ld.\n" , t_i_i); 
+        /*FIXME: WORRIED! With the test vmsumshs-1 I got this piece of code: 
+        if(t_i_i < -2147483648){
+            printf(" %ld is lesser then -2147483648.\n" , t_i_i);
+        }
+        to show this:
+        "-2147483648 is lesser then -2147483648"
+        something related to this warning: 
+        powerpc_isa.cpp:4619: warning: this decimal constant is unsigned only in ISO C90
+        */
         if ( t_i_i >= 0){
             if(t_i_i < 0) 
                 printf("* ERROR! WRONG! pos and neg!\n"); 
@@ -4607,6 +4620,9 @@ void ac_behavior( vmsumshs ){
             neg_saturated = (abs(t_i_i) > 0x80000000); 
             //FIXME: strangely this doesn't work, can anyone explain:
             //neg_saturated = (t_i_i < -1*0x80000000); 
+            //neither this: 
+            //neg_saturated = (t_i_i < -2147483648); 
+            //see the fixme before. 
         bool saturated = pos_saturated || neg_saturated; 
         uint32_t t_i = 
                 (uint32_t)(saturated ? 
