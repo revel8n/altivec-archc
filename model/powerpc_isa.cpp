@@ -3835,7 +3835,22 @@ void ac_behavior( vadduws ){
 }
 
 //!Instruction vsubcuw behavior method.
-void ac_behavior( vsubcuw ){}
+void ac_behavior( vsubcuw ){
+    dbg_printf(" vsubcuw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint32_t diff;
+    int i;
+    for (i = 0; i < 4; i++) {
+        diff = a.data[i] - b.data[i];
+        t.data[i] = diff > a.data[i] ? 1 : 0;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsubsbs behavior method.
 void ac_behavior( vsubsbs ){}
