@@ -5260,15 +5260,98 @@ void ac_behavior( vcmpequb ) {
 
 //!Instruction vcmpequb_ behavior method.
 void ac_behavior( vcmpequb_ ) {
-    dbg_printf(" vcmpequb_ v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    dbg_printf(" vcmpequb. v%d, v%d, v%d\n\n", vrt, vra, vrb);
     vcmpequb_impl(CR, VR, 1, vrt, vra, vrb);
 }
 
+void inline vcmpequh_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i, j;
+    uint16_t ha, hb, ht;
+    uint32_t ht32;
+    int remaining_eq = 8;
+    int remaining_ne = 8;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ha = (uint16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (uint16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+          
+            ht = (ha == hb);
+
+            if (ht) {
+                remaining_eq--;
+            } else {
+                remaining_ne--;
+            }
+
+            ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+    
+    if (update_cr6) CR6_update(CR, !remaining_eq, !remaining_ne);
+}
+
 //!Instruction vcmpequh behavior method.
-void ac_behavior( vcmpequh ){}
+void ac_behavior( vcmpequh ) {
+    dbg_printf(" vcmpequh v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequh_impl(CR, VR, 0, vrt, vra, vrb);
+}
+
+//!Instruction vcmpequh_ behavior method.
+void ac_behavior( vcmpequh_ ) {
+    dbg_printf(" vcmpequh. v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequh_impl(CR, VR, 1, vrt, vra, vrb);
+}
+
+void inline vcmpequw_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i;
+    uint32_t equal;
+    int remaining_eq = 4;
+    int remaining_ne = 4;
+
+    for (i = 0; i < 4; i++) {
+        equal = (a.data[i] == b.data[i]);
+
+        if (equal) {
+            remaining_eq--;
+        } else {
+            remaining_ne--;
+        }
+
+        t.data[i] = equal;
+    }
+    
+    VR.write(vrt, t);
+    if (update_cr6) CR6_update(CR, !remaining_eq, !remaining_ne);
+}
+
 
 //!Instruction vcmpequw behavior method.
-void ac_behavior( vcmpequw ){}
+void ac_behavior( vcmpequw )
+{
+    dbg_printf(" vcmpequw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequw_impl(CR, VR, 0, vrt, vra, vrb);
+}
+
+//!Instruction vcmpequw_ behavior method.
+void ac_behavior( vcmpequw_ )
+{
+    dbg_printf(" vcmpequw. v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequw_impl(CR, VR, 1, vrt, vra, vrb);
+}
 
 //!Instruction vcmpgtsb behavior method.
 void ac_behavior( vcmpgtsb ){}
@@ -5287,12 +5370,6 @@ void ac_behavior( vcmpgtuh ){}
 
 //!Instruction vcmpgtuw behavior method.
 void ac_behavior( vcmpgtuw ){}
-
-//!Instruction vcmpequh_ behavior method.
-void ac_behavior( vcmpequh_ ){}
-
-//!Instruction vcmpequw_ behavior method.
-void ac_behavior( vcmpequw_ ){}
 
 //!Instruction vcmpgtsb_ behavior method.
 void ac_behavior( vcmpgtsb_ ){}
