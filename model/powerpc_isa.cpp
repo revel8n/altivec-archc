@@ -3818,6 +3818,7 @@ void ac_behavior( vadduhs ){
     int i, j;
     uint16_t ha, hb, ht;
     uint32_t ht32;
+    int saturated = 0;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 2; j++) {
@@ -3826,9 +3827,10 @@ void ac_behavior( vadduhs ){
           
             ht = ha + hb;
 
-            // TODO: Need to mark SAT bit at VSCR
-            // saturate
-            ht = ht < ha ? 0xFFFF : ht;
+            if (ht < ha) {
+                ht = 0xFFFF;
+                saturated++;
+            }
 
             ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
             t.data[i] |= ht32;
@@ -3836,6 +3838,7 @@ void ac_behavior( vadduhs ){
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vadduws behavior method.
@@ -3848,14 +3851,21 @@ void ac_behavior( vadduws ){
 
     uint32_t sum;
     int i;
+    int saturated = 0;
+
     for (i = 0; i < 4; i++) {
         sum = a.data[i] + b.data[i];
-        // TODO: Need to mark SAT bit at VSCR
-        // saturate
-        t.data[i] = sum < a.data[i] ? 0xFFFFFFFF : sum;
+
+        if (sum < a.data[i]) {
+            sum = 0xFFFFFFFF;
+            saturated++;
+        }
+
+        t.data[i] = sum;
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vsubcuw behavior method.
