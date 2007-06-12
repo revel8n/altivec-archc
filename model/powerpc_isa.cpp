@@ -4963,7 +4963,74 @@ void ac_behavior( vmhaddshs ){}
 void ac_behavior( vmhraddshs ){}
 
 //!Instruction vmladduhm behavior method.
-void ac_behavior( vmladduhm ){}
+// Vector Multiply-Low-Add Unsigned Halfword Modulo - powerisa spec pag 163.
+// note: I'm considering that there is an error in this instruction's
+// specification:  s/i from 0 to 3/i from 0 to 7/
+void ac_behavior( vmladduhm ){
+
+    dbg_printf("vmladduhm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        uint16_t a_i_0  = (uint16_t) ((a.data[i] << k) >> k); 
+        uint16_t a_i_1  = (uint16_t) ((a.data[i] >> k)); 
+        uint16_t b_i_0  = (uint16_t) ((b.data[i] << k) >> k); 
+        uint16_t b_i_1  = (uint16_t) ((b.data[i] >> k)); 
+        uint32_t t_0  = a_i_0*b_i_0; 
+        uint32_t t_1  = a_i_1*b_i_1; 
+        uint16_t t_0l = (uint16_t)t_0; 
+        uint16_t t_1l = (uint16_t)t_1; 
+        uint16_t c_i_0  = (uint16_t) ((c.data[i] << k) >> k); 
+        uint16_t c_i_1  = (uint16_t) ((c.data[i] >> k)); 
+        uint32_t t_i_0 = t_0l + c_i_0; 
+        uint32_t t_i_1 = t_1l + c_i_1; 
+        uint32_t t_i = (t_i_1 << 16) + (uint16_t)t_i_0; 
+        t.data[i] = t_i; 
+        //debugging info: 
+        printf("(%X*%X = %X);(%X*%X = %X)\n",  
+                (unsigned short)a_i_1,  
+                (unsigned short)b_i_1, 
+                (unsigned int)t_1, 
+                (unsigned short)a_i_0, 
+                (unsigned short)b_i_0, 
+                (unsigned int)t_0); 
+
+        printf("(%lu*%lu = %lu);(%lu*%lu = %lu)\n",  
+                a_i_1,  
+                b_i_1, 
+                t_1, 
+                a_i_0, 
+                b_i_0, 
+                t_0); 
+
+        printf("{ t_1l + c_i_1 = t_i_1 } => "
+               "{ %X + %X = %X } => " 
+               "{ %lu + %lu = %lu }\n", 
+               (unsigned short)  t_1l, 
+               (unsigned short)c_i_1, 
+               (unsigned int)t_i_1, 
+               t_1l, c_i_1, t_i_1); 
+
+        printf("{ t_0l + c_i_0 = t_i_0 } => "
+               "{ %X + %X = %X } => " 
+               "{ %lu + %lu = %lu }\n", 
+               (unsigned short)  t_0l, 
+               (unsigned short)c_i_0, 
+               (unsigned int)t_i_0, 
+               t_0l, c_i_0, t_i_0); 
+
+        printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
+        printf("\n"); 
+    }
+    VR.write(vrt, t); 
+
+}
 
 //!Instruction vmsumubm behavior method.
 // Vector Multiply-Sum Unsigned Byte Modulo - powerisa spec pag 164.
