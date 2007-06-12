@@ -3943,7 +3943,60 @@ void ac_behavior( vsubsbs ){
 }
 
 //!Instruction vsubshs behavior method.
-void ac_behavior( vsubshs ){}
+void ac_behavior( vsubshs ){
+   dbg_printf(" vsubshs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int16_t ba, bb;
+    int32_t bt;
+    uint32_t bt32;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ba = (int16_t) ((0xFFFF0000 & (a.data[i] << (2*8 * j)))>>2*8);
+            bb = (int16_t) ((0xFFFF0000 & (b.data[i] << (2*8 * j)))>>2*8);
+
+            bt = (int32_t)ba - (int32_t)bb;
+            printf("before -> word:%02d; halfword:%02d; ba: %04X; bb: %04X; bt: %04X\n",i,j,ba,bb,bt);
+
+            bool pos_saturated=false, neg_saturated=false;
+            if ( bt >= 0){
+                pos_saturated = (bt >  0x7FFF);
+                printf("bt >= 0; pos_saturated: %s\n",pos_saturated?"true":"false");
+            }
+            else {
+                neg_saturated = (abs(bt) > 0x8000);
+                printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
+            }
+            //FIXME: strangely this doesn't work, can anyone explain:
+            //neg_saturated = (t_i_i < -1*0x80000000);
+            //neither this:
+            //neg_saturated = (t_i_i < -2147483648);
+            //see the fixme before.
+            bool saturated = pos_saturated || neg_saturated;
+            uint16_t t_i =
+                (uint16_t)(saturated ?
+                        (pos_saturated ? 0x7FFF: 0x8000)
+                        : bt);
+            printf("after  -> word:%02d; halfword:%02d; ba: %04X; bb: %04X; bt: %04X\n",i,j,ba,bb,t_i);
+
+            if(saturated){
+                //FIXME: undeclared function.
+                //altivec_mark_saturation();
+            }
+
+
+            bt32 = ((uint32_t)(t_i) & (0x0000FFFF)) << (16 *(1-j));
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vsubsws behavior method.
 void ac_behavior( vsubsws ){}
