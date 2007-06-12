@@ -4952,6 +4952,49 @@ void ac_behavior( vsrw ){}
 
 //!Instruction vperm behavior method.
 void ac_behavior( vperm ){
+    dbg_printf(" vperm v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    int i, j;
+    uint8_t ba = 0,
+            bb = 0,
+            bc = 0,
+            bt = 0;
+    uint32_t bt32 = 0;
+
+    // accesses words and bytes in the right order 
+    // (i==0 means word 0, j==0 means byte 0 as in the specs)
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            // we only want bits 3:7 of bc, they are going to index
+            // the desired output byte from vra or vrb
+            bc = (uint8_t) ((0x1F000000 & (c.data[i] << (8 * j)))>>3*8);
+
+            if ( bc <= 15 ) {
+                int wo = bc / 4;
+                int by = bc % 4;
+                ba = (uint8_t) ((0xFF000000 & (a.data[wo] << (8 * by)))>>3*8);
+                bt = ba;
+                printf("bc: %02d; wo: %02d; by: %02d; bt: %02X\n",bc,wo,by,bt);
+            }
+            else {
+                int wo = bc / 4;
+                int by = bc % 4;
+                bb = (uint8_t) ((0xFF000000 & (b.data[wo-4] << (8 * by)))>>3*8);
+                bt = bb;
+                printf("bc: %02d; wo: %02d; by: %02d; bt: %02X\n",bc,wo,by,bt);
+           }
+
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * (3-j));
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
 
 }
 
