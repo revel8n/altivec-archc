@@ -3314,6 +3314,7 @@ void ac_behavior( xoris )
 // AltiVec implementations
 
 typedef ac_multireg<unsigned long, 4> vec;
+typedef ac_regbank<32, ac_multireg<unsigned long, 4>, ac_multireg<unsigned long, 4> > vecbank;
 
 void ac_behavior( AV_X1 ){}
 void ac_behavior( AV_X2 ){}
@@ -5206,8 +5207,52 @@ void ac_behavior( vmaddfp ){}
 //!Instruction vmsubfp behavior method.
 void ac_behavior( vmsubfp ){}
 
+void inline vcmpequb_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i, j;
+    uint8_t ba, bb, bt;
+    uint32_t bt32;
+    int remaining_eq = 16;
+    int remaining_ne = 16;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            bt = (ba == bb);
+
+            if (bt) {
+                remaining_eq--;
+            } else {
+                remaining_ne--;
+            }
+
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+    
+    if (update_cr6) CR6_update(CR, !remaining_eq, !remaining_ne);
+}
+
 //!Instruction vcmpequb behavior method.
-void ac_behavior( vcmpequb ){}
+void ac_behavior( vcmpequb ) {
+    dbg_printf(" vcmpequb v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequb_impl(CR, VR, 0, vrt, vra, vrb);
+}
+
+//!Instruction vcmpequb_ behavior method.
+void ac_behavior( vcmpequb_ ) {
+    dbg_printf(" vcmpequb_ v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpequb_impl(CR, VR, 1, vrt, vra, vrb);
+}
 
 //!Instruction vcmpequh behavior method.
 void ac_behavior( vcmpequh ){}
@@ -5232,9 +5277,6 @@ void ac_behavior( vcmpgtuh ){}
 
 //!Instruction vcmpgtuw behavior method.
 void ac_behavior( vcmpgtuw ){}
-
-//!Instruction vcmpequb_ behavior method.
-void ac_behavior( vcmpequb_ ){}
 
 //!Instruction vcmpequh_ behavior method.
 void ac_behavior( vcmpequh_ ){}
