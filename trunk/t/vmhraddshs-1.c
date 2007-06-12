@@ -53,7 +53,7 @@ int main() {
 	    "lvewx 4, 0, 2; ");
 
 
-	asm("vmhaddshs 1, 2, 3, 4; ");
+	asm("vmhraddshs 1, 2, 3, 4; ");
 
 
 	return 0;
