@@ -3928,8 +3928,7 @@ void ac_behavior( vsubsbs ){
             printf("after  -> word:%02d; byte:%02d; ba: %02X; bb: %02X; bt: %02X\n",i,j,ba,bb,t_i);
 
             if(saturated){
-                //FIXME: undeclared function.
-                //altivec_mark_saturation();
+                if (saturated) VSCR_SAT(VSCR, 1);
             }
 
 
@@ -3984,8 +3983,7 @@ void ac_behavior( vsubshs ){
             printf("after  -> word:%02d; halfword:%02d; ba: %04X; bb: %04X; bt: %04X\n",i,j,ba,bb,t_i);
 
             if(saturated){
-                //FIXME: undeclared function.
-                //altivec_mark_saturation();
+                if (saturated) VSCR_SAT(VSCR, 1);
             }
 
 
@@ -4039,8 +4037,8 @@ void ac_behavior( vsubsws ){
        printf("after  -> word:%02d; ba: %08X; bb: %08X; bt: %08X\n",i,ba,bb,t_i);
 
        if(saturated){
-           //FIXME: undeclared function.
-           //altivec_mark_saturation();
+           if (saturated) VSCR_SAT(VSCR, 1);
+
        }
 
        bt32 = t_i;
