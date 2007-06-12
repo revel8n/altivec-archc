@@ -7,15 +7,15 @@
 
 int main()
 {
-	vector unsigned long v1 = (vector unsigned long) {2, 0, 2, 8}; 
-	vector unsigned long v2 = (vector unsigned long) {1, 1, 1, 1};
-	vector unsigned long v3;
-    long correct[4] = { 3, 1, 3, 9 };
-
-	v3 = (vector unsigned long) vec_add(v1, v2);
+	vector signed long v1 = (vector signed long) {-3, -1025, 2, 8}; 
+	vector signed long v2 = (vector signed long) {1, 1, 3333, -1};
+	vector signed long v3;
+    signed long correct[4] = { -2, -1024, 3335, 7 };
+	
+	v3 = (vector long) vec_add(v1, v2);
 
 	// FIXME: why doesn't work with a local variable?
-	unsigned long *result = (unsigned long *) 0x1000;
+    signed long *result = (signed long *) 0x1000;
     int i;
 
     for (i = 0; i < 4; i++) {
