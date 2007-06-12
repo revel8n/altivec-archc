@@ -4853,7 +4853,77 @@ void ac_behavior( vmladduhm ){}
 void ac_behavior( vmsumubm ){}
 
 //!Instruction vmsummbm behavior method.
-void ac_behavior( vmsummbm ){}
+// Vector Multiply-Sum Signed Halfword Modulo - powerisa spec pag 166.
+void ac_behavior( vmsummbm ){
+
+    dbg_printf("vmsummbm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    for (int i = 0; i < 4; i++){
+        int k = 8 ;  //  shifts de sizeof(BYTE). 
+        int8_t  a_i_0 = (int8_t)  ((a.data[i] << 3*k) >> 3*k); 
+        int8_t  a_i_1 = (int8_t)  ((a.data[i] << 2*k) >> 3*k); 
+        int8_t  a_i_2 = (int8_t)  ((a.data[i] << 1*k) >> 3*k); 
+        int8_t  a_i_3 = (int8_t)  ((a.data[i] << 0  ) >> 3*k); 
+        uint8_t b_i_0 = (uint8_t) ((b.data[i] << 3*k) >> 3*k); 
+        uint8_t b_i_1 = (uint8_t) ((b.data[i] << 2*k) >> 3*k); 
+        uint8_t b_i_2 = (uint8_t) ((b.data[i] << 1*k) >> 3*k); 
+        uint8_t b_i_3 = (uint8_t) ((b.data[i] << 0  ) >> 3*k); 
+        int16_t t_0   = a_i_0 * b_i_0; 
+        int16_t t_1   = a_i_1 * b_i_1; 
+        int16_t t_2   = a_i_2 * b_i_2; 
+        int16_t t_3   = a_i_3 * b_i_3; 
+        int32_t c_i   = (int32_t) c.data[i]; 
+        int32_t t_i   =  t_0 + t_1 + t_2 + t_3 + c_i; 
+        t.data[i]     = (uint32_t)t_i; 
+        //debug information:
+        printf("(%X*%X);(%X*%X);(%X*%X);(%X*%X)\n",  
+                (unsigned char)a_i_3,  
+                (unsigned char)b_i_3, 
+                (unsigned char)a_i_2,  
+                (unsigned char)b_i_2, 
+                (unsigned char)a_i_1,  
+                (unsigned char)b_i_1, 
+                (unsigned char)a_i_0, 
+                (unsigned char)b_i_0); 
+
+        printf("(%ld*%lu);(%ld*%lu);(%ld*%lu);(%ld*%lu)\n",  
+                a_i_3,  
+                b_i_3, 
+                a_i_2,  
+                b_i_2, 
+                a_i_1,  
+                b_i_1, 
+                a_i_0, 
+                b_i_0); 
+        
+        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+                " %X +  %X +  %X +  %X + %X ="
+                "t_i  = %X \n",  
+                (unsigned short)t_3, 
+                (unsigned short)t_2, 
+                (unsigned short)t_1, 
+                (unsigned short)t_0, 
+                (unsigned int)  c_i, 
+                (unsigned int)  t_i); 
+
+        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+                " %ld +  %ld +  %ld + %ld + %ld ="
+                "t_i  = %ld \n",  
+                (short)t_3, 
+                (short)t_2, 
+                (short)t_1, 
+                (short)t_0, 
+                (int)  c_i, 
+                (int)  t_i); 
+        printf("\n"); 
+    }
+    VR.write(vrt, t); 
+}
 
 //!Instruction vmsumshm behavior method.
 // Vector Multiply-Sum Signed Halfword Modulo - powerisa spec pag 166.
@@ -4893,21 +4963,14 @@ void ac_behavior( vmsumshm ){
             // -0x8000_0000 ==  -2^31
             neg_saturated = (abs(t_i_i) > 0x80000000); 
         bool saturated = pos_saturated || neg_saturated; 
-        //FIXME: change uint32_t
-        //uint32_t t_i = 
-        //        (uint32_t)(saturated ? 
         t_i_i = (saturated ? 
                             (pos_saturated ? 
-                               //t_i_i - 0x7fffffff: t_i_i + 0x80000000) 
-                               //t_i_i - 0x80000000: t_i_i + 0x7fffffff) 
-                               //t_i_i - 0x80000000: t_i_i + 0x80000000) 
                                t_i_i - 0x80000000: t_i_i + 0x80000001) 
                             : t_i_i); 
         uint32_t t_i = (uint32_t)t_i_i;
         t.data[i] = t_i; 
 
         //debug information: 
-
         printf("(%X*%X);(%X*%X)\n",  
                 (unsigned int)a_i_1s,  
                 (unsigned int)b_i_1s, 
