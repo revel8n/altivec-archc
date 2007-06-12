@@ -30,5 +30,7 @@ test: $(tests) ../model/powerpc.x
 	@cat /tmp/altivec.tests.txt | grep '^000' | wc -l
 	@echo -n ' total: '
 	@cat /tmp/altivec.tests.txt | wc -l
+	@echo -n 'unique: '
+	@cat /tmp/altivec.tests.txt | sed -e 's/.* \(.*\)-.*/\1/' | uniq | grep -v gcc | wc -l 
 	@rm -f /tmp/altivec.tests.txt
 
