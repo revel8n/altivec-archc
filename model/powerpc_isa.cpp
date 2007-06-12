@@ -4957,7 +4957,95 @@ void ac_behavior( vperm ){}
 void ac_behavior( vsel ){}
 
 //!Instruction vmhaddshs behavior method.
-void ac_behavior( vmhaddshs ){}
+// Vector Multiply-High-Add Signed Halfword Saturate - powerisa spec pag 163.
+void ac_behavior( vmhaddshs ){
+
+    dbg_printf("vmhaddshs v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        int16_t a_i_0  = (int16_t) ((a.data[i] << k) >> k); 
+        int16_t a_i_1  = (int16_t) ((a.data[i] >> k)); 
+        int16_t b_i_0  = (int16_t) ((b.data[i] << k) >> k); 
+        int16_t b_i_1  = (int16_t) ((b.data[i] >> k)); 
+        int32_t t_0  = a_i_0*b_i_0; 
+        int32_t t_1  = a_i_1*b_i_1; 
+        int16_t t_0l = (int16_t)(t_0 >> k); 
+        int16_t t_1l = (int16_t)(t_1 >> k); 
+        int16_t c_i_0  = (int16_t) ((c.data[i] << k) >> k); 
+        int16_t c_i_1  = (int16_t) ((c.data[i] >> k)); 
+        int32_t t_i_0 = t_0l + c_i_0; 
+        int32_t t_i_1 = t_1l + c_i_1; 
+        uint32_t neg_saturated_0 = 0; 
+        uint32_t neg_saturated_1 = 0; 
+        uint32_t pos_saturated_0 = 0; 
+        uint32_t pos_saturated_1 = 0; 
+        // 0x7fff = 2^15 - 1 0x8000
+        t_i_0 = (t_i_0 > 0x7fff ? (pos_saturated_0 = 0x7fff) : t_i_0); 
+        t_i_1 = (t_i_1 > 0x7fff ? (pos_saturated_1 = 0x7fff) : t_i_1); 
+        t_i_0 = (abs(t_i_0) > 0x8000 ? 
+                 (int32_t)(neg_saturated_0 = 0x8000) : t_i_0); 
+        t_i_1 = (abs(t_i_1) > 0x8000 ? 
+                 (int32_t)(neg_saturated_1 = 0x8000) : t_i_1); 
+        uint32_t t_i = (((uint32_t)t_i_1) << 16) + (uint16_t)t_i_0; 
+        t.data[i] = t_i; 
+
+        //debugging info: 
+        printf("(%X*%X = %X);(%X*%X = %X)\n",  
+                (unsigned short)a_i_1,  
+                (unsigned short)b_i_1, 
+                (unsigned int)t_1, 
+                (unsigned short)a_i_0, 
+                (unsigned short)b_i_0, 
+                (unsigned int)t_0); 
+
+        printf("(%ld*%ld = %ld);(%ld*%ld = %ld)\n",  
+                a_i_1,  
+                b_i_1, 
+                t_1, 
+                a_i_0, 
+                b_i_0, 
+                t_0); 
+
+        printf("{ t_1l + c_i_1 = t_i_1 (bef. sat.) =  t_i_1 (aft. sat) } =>\n "
+               "{ %X + %X = %X = %X} => " 
+               "{ %ld + %ld = %ld = %ld }\n", 
+               (unsigned short)  t_1l, 
+               (unsigned short)c_i_1, 
+               (unsigned int)(t_1l + c_i_1), 
+               (unsigned int)t_i_1, 
+               t_1l, c_i_1, (t_1l + c_i_1) , t_i_1); 
+        if( pos_saturated_1 )
+            printf("t_i_1 saturated (positive)\n"); 
+        if( neg_saturated_1 )
+            printf("t_i_1 saturated (negative)\n"); 
+
+        printf("{ t_0l + c_i_0 = t_i_0 (bef. sat.) =  t_i_0 (aft. sat) } =>\n "
+               "{ %X + %X = %X = %X } => " 
+               "{ %ld + %ld = %ld = %ld }\n", 
+               (unsigned short)  t_0l, 
+               (unsigned short)c_i_0, 
+               (unsigned int)(t_0l + c_i_0), 
+               (unsigned int)t_i_0, 
+               t_0l, c_i_0, (t_0l + c_i_0), t_i_0); 
+        if( pos_saturated_0 )
+            printf("t_i_1 saturated (positive)\n"); 
+        if( neg_saturated_0 )
+            printf("t_i_1 saturated (negative)\n"); 
+
+        printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
+        printf("\n"); 
+
+    }
+    VR.write(vrt, t); 
+
+}
 
 //!Instruction vmhraddshs behavior method.
 void ac_behavior( vmhraddshs ){}
