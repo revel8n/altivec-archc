@@ -3999,7 +3999,57 @@ void ac_behavior( vsubshs ){
 }
 
 //!Instruction vsubsws behavior method.
-void ac_behavior( vsubsws ){}
+void ac_behavior( vsubsws ){
+   dbg_printf(" vsubsws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+   vec t(0);
+   vec a = VR.read(vra);
+   vec b = VR.read(vrb);
+
+   int i;
+   int32_t ba, bb;
+   int64_t bt;
+   uint32_t bt32;
+   for (i = 0; i < 4; i++) {
+       ba = (int32_t) a.data[i];
+       bb = (int32_t) b.data[i];
+
+       bt = (int64_t)ba - (int64_t)bb;
+       printf("before -> word:%02d; ba: %08X; bb: %08X; bt: %08X\n",i,ba,bb,bt);
+
+       bool pos_saturated=false, neg_saturated=false;
+       if ( bt >= 0){
+           pos_saturated = (bt >  0x7FFFFFFF);
+           printf("bt >= 0; pos_saturated: %s\n",pos_saturated?"true":"false");
+       }
+       else {
+           neg_saturated = (abs(bt) > 0x80000000);
+           printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
+       }
+       //FIXME: strangely this doesn't work, can anyone explain:
+       //neg_saturated = (t_i_i < -1*0x80000000);
+       //neither this:
+       //neg_saturated = (t_i_i < -2147483648);
+       //see the fixme before.
+       bool saturated = pos_saturated || neg_saturated;
+       uint32_t t_i =
+           (uint32_t)(saturated ?
+                   (pos_saturated ? 0x7FFFFFFF: 0x80000000)
+                   : bt);
+       printf("after  -> word:%02d; ba: %08X; bb: %08X; bt: %08X\n",i,ba,bb,t_i);
+
+       if(saturated){
+           //FIXME: undeclared function.
+           //altivec_mark_saturation();
+       }
+
+       bt32 = t_i;
+       t.data[i] = bt32;
+   }
+
+   VR.write(vrt, t);
+
+}
 
 //!Instruction vsububm behavior method.
 void ac_behavior( vsububm ){
@@ -4017,7 +4067,7 @@ void ac_behavior( vsububm ){
         for (j = 0; j < 4; j++) {
             ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
             bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
-         
+
             bt = ba - bb;
 
             bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
