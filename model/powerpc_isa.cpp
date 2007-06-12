@@ -3887,7 +3887,60 @@ void ac_behavior( vsubcuw ){
 }
 
 //!Instruction vsubsbs behavior method.
-void ac_behavior( vsubsbs ){}
+void ac_behavior( vsubsbs ){
+   dbg_printf(" vsubsbs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int8_t ba, bb;
+    int32_t bt;
+    uint32_t bt32;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (int8_t) ((0xFF000000 & (a.data[i] << (8 * j)))>>3*8);
+            bb = (int8_t) ((0xFF000000 & (b.data[i] << (8 * j)))>>3*8);
+
+            bt = (int32_t)ba - (int32_t)bb;
+            printf("before -> word:%02d; byte:%02d; ba: %02X; bb: %02X; bt: %02X\n",i,j,ba,bb,bt);
+
+            bool pos_saturated=false, neg_saturated=false;
+            if ( bt >= 0){
+                pos_saturated = (bt >  0x7f);
+                printf("bt >= 0; pos_saturated: %s\n",pos_saturated?"true":"false");
+            }
+            else {
+                neg_saturated = (abs(bt) > 0x80);
+                printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
+            }
+            //FIXME: strangely this doesn't work, can anyone explain:
+            //neg_saturated = (t_i_i < -1*0x80000000);
+            //neither this:
+            //neg_saturated = (t_i_i < -2147483648);
+            //see the fixme before.
+            bool saturated = pos_saturated || neg_saturated;
+            uint8_t t_i =
+                (uint8_t)(saturated ?
+                        (pos_saturated ? 0x7f: 0x80)
+                        : bt);
+            printf("after  -> word:%02d; byte:%02d; ba: %02X; bb: %02X; bt: %02X\n",i,j,ba,bb,t_i);
+
+            if(saturated){
+                //FIXME: undeclared function.
+                //altivec_mark_saturation();
+            }
+
+
+            bt32 = ((uint32_t)(t_i) & (0x000000FF)) << (8 * (3-j));
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vsubshs behavior method.
 void ac_behavior( vsubshs ){}
