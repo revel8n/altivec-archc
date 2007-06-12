@@ -4951,10 +4951,48 @@ void ac_behavior( vsrh ){}
 void ac_behavior( vsrw ){}
 
 //!Instruction vperm behavior method.
-void ac_behavior( vperm ){}
+void ac_behavior( vperm ){
+
+}
 
 //!Instruction vsel behavior method.
-void ac_behavior( vsel ){}
+void ac_behavior( vsel ){
+    dbg_printf(" vsel v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    vec c = VR.read(vrc);
+
+    int i;
+    uint32_t wa;
+    uint32_t wb;
+    uint32_t wc;
+    uint32_t wt;
+    uint32_t mask_a;
+    uint32_t mask_b;
+    uint32_t ta;
+    uint32_t tb;
+    for (i = 0; i < 4; i++) {
+        wa = a.data[i];
+        wb = b.data[i];
+        wc = c.data[i];
+        mask_a = ~ wc;
+        mask_b = wc;
+        ta = wa & mask_a;
+        tb = wb & mask_b;
+        wt = ta | tb;
+        printf("wa: %08X; mask_a: %08X; ta: %08X\n"
+               "wb: %08X; mask_b: %08X; tb: %08X\n"
+               "              mask  : %08X; wt: %08X\n",
+                wa,mask_a, ta,
+                wb,mask_b, tb,
+                wc,wt);
+        t.data[i] = wt;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmhaddshs behavior method.
 // Vector Multiply-High-Add Signed Halfword Saturate - powerisa spec pag 163.
