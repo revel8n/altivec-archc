@@ -3463,9 +3463,7 @@ void ac_behavior( lvxl ){
 }
 
 //!Instruction lvsl behavior method.
-void ac_behavior( lvsl ){
-
-}
+void ac_behavior( lvsl ){}
 
 //!Instruction lvsr behavior method.
 void ac_behavior( lvsr ){}
@@ -3649,7 +3647,19 @@ void ac_behavior( vspltb ){}
 void ac_behavior( vsplth ){}
 
 //!Instruction vspltw behavior method.
-void ac_behavior( vspltw ){}
+void ac_behavior( vspltw ) {
+    dbg_printf(" vspltw v%d, v%d, %d\n\n", vrt, vrb, uim2);
+
+    vec t(0);
+    vec b = VR.read(vrb);
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = b.data[uim2];
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vspltb behavior method.
 void ac_behavior( vspltisb ){}
@@ -3658,10 +3668,26 @@ void ac_behavior( vspltisb ){}
 void ac_behavior( vspltish ){}
 
 //!Instruction vspltw behavior method.
-void ac_behavior( vspltisw ){}
+void ac_behavior( vspltisw ) {
+    dbg_printf(" vspltisw v%d, %d\n\n", vrt, vrb, sim);
 
-//!Instruction perm behavior method.
-void ac_behavior( perm ){}
+    vec t(0);
+    uint32_t value  = (uint32_t) sim;
+    uint32_t signal = value >> 4;
+
+    printf("%#x\n", value);
+
+    if (signal) {
+        value |= 0xFFFFFFE0;
+    }
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        t.data[i] = value;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsl behavior method.
 void ac_behavior( vsl ){
