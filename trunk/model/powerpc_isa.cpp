@@ -4319,7 +4319,33 @@ void ac_behavior( vmulesb ){}
 void ac_behavior( vmulesh ){}
 
 //!Instruction vmuleub behavior method.
-void ac_behavior( vmuleub ){}
+void ac_behavior( vmuleub )
+{
+    dbg_printf(" vmuleub v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t ba, bb;
+    uint16_t ht;
+    uint32_t ht32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j+=2) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            ht = ba * bb;
+
+            ht32 = (((uint32_t) ht) & (0x0000FFFF)) << (8 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmuleuh behavior method.
 void ac_behavior( vmuleuh ){}
@@ -4331,7 +4357,33 @@ void ac_behavior( vmulosb ){}
 void ac_behavior( vmulosh ){}
 
 //!Instruction vmuloub behavior method.
-void ac_behavior( vmuloub ){}
+void ac_behavior( vmuloub)
+{
+    dbg_printf(" vmuloub v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t ba, bb;
+    uint16_t ht;
+    uint32_t ht32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j+=2) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * (j+1))));
+            bb = (uint8_t) (0x000000FF & (b.data[i] >> (8 * (j+1))));
+         
+            ht = ba * bb;
+
+            ht32 = (((uint32_t) ht) & (0x0000FFFF)) << (8 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmulouh behavior method.
 void ac_behavior( vmulouh ){}
