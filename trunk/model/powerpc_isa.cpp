@@ -3735,10 +3735,83 @@ void ac_behavior( vsl ){
 }
 
 //!Instruction vslo behavior method.
-void ac_behavior( vslo ){}
+void ac_behavior( vslo ){
+    dbg_printf(" vslo v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j, byte_num;
+    uint8_t ba = 0, bb = 0,
+            sh = 0;
+    uint32_t bt32 = 0;
+
+    sh = (uint8_t)((0x00000078 & (b.data[3]))>>3);
+    printf("sh: %02X; b.data[3]: %08X\n",sh,b.data[3]);
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            byte_num = i*4 + j - sh;
+            bool write_out = (byte_num>=0);
+            if(write_out) {
+                int wo = byte_num / 4;
+                int bo = byte_num % 4;
+                ba = (uint8_t) ((0xFF000000 & (a.data[i] << (8 * j)))>>3*8);
+                bt32 = (((uint32_t) ba) & (0x000000FF)) << (8 * (3-bo));
+                printf("wo: %02d; bo: %02d; ba: %02X; bt32: %08X\n",wo,bo,ba,bt32);
+                t.data[wo] |= bt32;
+            }
+        }
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vsr behavior method.
-void ac_behavior( vsr ){}
+void ac_behavior( vsr ){
+    dbg_printf(" vsr v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t bb = 0,
+            sh = 0;
+    uint32_t bt32 = 0;
+    bool undefined=false;
+
+    sh = (uint8_t)(0x00000007 & (b.data[3]));
+    printf("sh: %02X; b.data[3]: %08X\n",sh,b.data[3]);
+
+    // accesses words and bytes in the right order 
+    // (i==0 means word 0, j==0 means byte 0 as in the specs)
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            // we only want bits 5:7 of bc
+            bb = (uint8_t) ((0x07000000 & (b.data[i] << (8 * j)))>>3*8);
+            printf("sh: %02X; bb: %02X\n",sh,bb);
+
+            if ( bb != sh ) {
+                // if the shift counts aren't all the same, result is undefined
+                undefined = true;
+                t.data[i] = 0xDEADBEEF;
+                break;
+            }
+        }
+    }
+
+    if (!undefined) {
+        t.data[0] = a.data[0] >> sh;
+        for (i = 1; i < 4; i++) {
+            t.data[i] = (a.data[i-1] << (32-sh)) | (a.data[i] >> sh);
+        }
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vsro behavior method.
 void ac_behavior( vsro ){}
@@ -5361,7 +5434,7 @@ void ac_behavior( vsrw )
 
 //!Instruction vperm behavior method.
 void ac_behavior( vperm ){
-    dbg_printf(" vperm v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
+    dbg_printf(" vperm v%d, v%d, v%d, v%d\n\n", vrt, vra, vrb, vrc);
 
     vec t(0);
     vec a = VR.read(vra);
