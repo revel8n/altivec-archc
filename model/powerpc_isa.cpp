@@ -3692,7 +3692,45 @@ void ac_behavior( vaddcuw ){
 }
 
 //!Instruction vaddsbs behavior method.
-void ac_behavior( vaddsbs ){}
+void ac_behavior( vaddsbs ) {
+    dbg_printf(" vaddsbs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int8_t ba, bb;
+    int16_t bt;
+    uint8_t raw;
+
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (int8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (int8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            bt = (int16_t) ba + (int16_t) bb;
+
+            if (abs(bt) > 0x80) {
+                raw = 0x80;
+                saturated++;
+            } else if (bt > 0x7F) {
+                raw = 0x7F;
+                saturated++;
+            } else {
+                raw = (uint8_t) bt;
+            }
+
+            t.data[i] |= (((uint32_t) raw) & (0x000000FF)) << (8 * j);
+        }
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+
+}
 
 //!Instruction vaddshs behavior method.
 void ac_behavior( vaddshs ){}
