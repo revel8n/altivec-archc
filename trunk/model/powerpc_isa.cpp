@@ -3729,14 +3729,87 @@ void ac_behavior( vaddsbs ) {
 
     VR.write(vrt, t);
     if (saturated) VSCR_SAT(VSCR, 1);
-
 }
 
 //!Instruction vaddshs behavior method.
-void ac_behavior( vaddshs ){}
+void ac_behavior( vaddshs )
+{
+    dbg_printf(" vaddshs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int16_t ba, bb;
+    int32_t bt;
+    uint16_t raw;
+
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ba = (int16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            bb = (int16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+         
+            bt = (int32_t) ba + (int32_t) bb;
+
+            if (abs(bt) > 0x8000) {
+                raw = 0x8000;
+                saturated++;
+            } else if (bt > 0x7FFF) {
+                raw = 0x7FFF;
+                saturated++;
+            } else {
+                raw = (uint16_t) bt;
+            }
+
+            t.data[i] |= (((uint32_t) raw) & (0x0000FFFF)) << (16 * j);
+        }
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vaddsws behavior method.
-void ac_behavior( vaddsws ){}
+void ac_behavior( vaddsws )
+{
+    dbg_printf(" vaddsws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    int32_t wa, wb;
+    int64_t sum;
+    uint32_t raw;
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        wa = (int32_t) a.data[i];
+        wb = (int32_t) b.data[i];
+
+        sum = (int64_t) wa + (int64_t) wb;
+
+        if (abs(sum) > 0x080000000) {
+            printf("0x%08X\n", abs(sum));
+            raw = 0x80000000;
+            saturated++;
+        } else if (sum > 0x7FFFFFFF) {
+            raw = 0x7FFFFFFF;
+            saturated++;
+        } else {
+            raw = (uint32_t) sum;
+        }
+
+        t.data[i] = raw;
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vaddubm behavior method.
 void ac_behavior( vaddubm ) {
