@@ -3463,7 +3463,9 @@ void ac_behavior( lvxl ){
 }
 
 //!Instruction lvsl behavior method.
-void ac_behavior( lvsl ){}
+void ac_behavior( lvsl ){
+
+}
 
 //!Instruction lvsr behavior method.
 void ac_behavior( lvsr ){}
@@ -3658,11 +3660,53 @@ void ac_behavior( vspltish ){}
 //!Instruction vspltw behavior method.
 void ac_behavior( vspltisw ){}
 
-//!Instruction vperm behavior method.
+//!Instruction perm behavior method.
 void ac_behavior( perm ){}
 
 //!Instruction vsl behavior method.
-void ac_behavior( vsl ){}
+void ac_behavior( vsl ){
+    dbg_printf(" vsl v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t bb = 0,
+            sh = 0;
+    uint32_t bt32 = 0;
+    bool undefined=false;
+
+    sh = (uint8_t)(0x00000007 & (b.data[3]));
+    printf("sh: %02X; b.data[3]: %08X\n",sh,b.data[3]);
+
+    // accesses words and bytes in the right order 
+    // (i==0 means word 0, j==0 means byte 0 as in the specs)
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            // we only want bits 5:7 of bc
+            bb = (uint8_t) ((0x07000000 & (b.data[i] << (8 * j)))>>3*8);
+            printf("sh: %02X; bb: %02X\n",sh,bb);
+
+            if ( bb != sh ) {
+                // if the shift counts aren't all the same, result is undefined
+                undefined = true;
+                t.data[i] = 0xDEADBEEF;
+                break;
+            }
+        }
+    }
+
+    if (!undefined) {
+        for (i = 0; i < 3; i++) {
+            t.data[i] = (a.data[i] << sh) | (a.data[i+1] >> (32-sh));
+        }
+        t.data[3] = a.data[3] << sh;
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vslo behavior method.
 void ac_behavior( vslo ){}
