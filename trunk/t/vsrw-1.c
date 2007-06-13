@@ -1,8 +1,6 @@
 #include "test.h"
 #include "sample_data.h"
 
-// vslw
-
 int main() {
 	uint32_t a, b, c, d;
 
