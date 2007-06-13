@@ -5134,13 +5134,84 @@ void ac_behavior( vrlw )
 }
 
 //!Instruction vsrab behavior method.
-void ac_behavior( vsrab ){}
+void ac_behavior( vsrab )
+{
+    dbg_printf(" vsrab v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int8_t ba, bt;
+    uint8_t bb;
+    uint32_t bt32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (int8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (uint8_t) (0x00000007 & (b.data[i] >> (8 * j)));
+
+            bt = (ba >> bb);
+            
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsrah behavior method.
-void ac_behavior( vsrah ){}
+void ac_behavior( vsrah ) {
+    dbg_printf(" vsrah v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int16_t ha, ht;
+    uint16_t hb;
+    uint32_t ht32;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ha = (int16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (uint16_t) (0x0000000F & (b.data[i] >> (16 * j)));
+
+            ht = (ha >> hb);
+            
+            ht32 = (((uint32_t) ht) & (0x0000FFFF)) << (16 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsraw behavior method.
-void ac_behavior( vsraw ){}
+void ac_behavior( vsraw )
+{
+    dbg_printf(" vsraw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    uint8_t sh;
+    int32_t w;
+    
+    int i;
+    for (i = 0; i < 4; i++) {
+        sh = (uint8_t) (b.data[i] & 0x0000001F);
+        w = a.data[i];
+        w >>= sh;
+        t.data[i] = (uint32_t) w;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vsrb behavior method.
 void ac_behavior( vsrb )
