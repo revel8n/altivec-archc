@@ -1,0 +1,104 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[brazil]{babel}
+\usepackage{palatino}
+\usepackage{fullpage}
+
+\newcommand{\tech}[1]{\textit{#1}}
+\newcommand{\who}[1]{\textbf{ (#1)}}
+
+\begin{document}
+
+\title{Projeto de MC723 - Grupo 05 - Relatório da Fase 3\\ Modelagem das instruções AltiVec no ArchC}
+\author{
+Caio Marcelo de Oliveira Filho, 015599 \and
+Helder dos Santos Ribeiro, 033245 \and
+Ribamar Santarosa de Sousa, 017209 \and 
+Tarcísio Genaro Rodrigues, 017391
+}
+
+\date{}
+\maketitle
+
+\section{Objetivos planejados para a fase 3}
+
+\begin{itemize}
+\item Durante essa fase continua o desenvolvimento de testes. \textbf{OK.}
+
+\item Continua a atividade de implementação, implementando mais instruções.
+Focar nos grupos de instruções mais complicados. \textbf{OK.}
+
+\item \textbf{Entrega 3 -- 12/Junho}, contendo uma versão com \textbf{91}
+instruções funcionando e testes para elas, e um relato do que foi desenvolvido
+durante a Fase 3. \textbf{OK.}
+
+\end{itemize}
+
+Comentários sobre o que foi realizado:
+
+
+\subsection{Instruções implementadas}
+
+A meta de 91 instruções implementadas e testadas foi atingida. O foco desta vez
+foram as instruções mais complexas com operações sobre inteiros e lógicas. Os
+grupos gerais e seus implementadores foram:
+
+\begin{itemize}
+\item Vector Integer Multiply-Add/Sum Instructions (9 instruções) \who{Ribamar}
+\item Vector Integer Average Instructions (6 instruções) \who{Ribamar}
+\item Vector Integer Subtract Instructions (10 instruções) \who{Helder}
+\item Vector Permute and Select Instructions (2 instruções) \who{Helder}
+\item Vector Shift Instructions (3 instruções) \who{Helder}
+\item Vector Integer Rotate and Shift Instructions (12 instruções) \who{Tarcísio}
+\item Vector Integer Add Instructions (3 instruções) \who{Tarcísio}
+\item Instruções órfãs de vários grupos (splat, mult, etc.) (~15 instruções) \who{Caio}
+
+\end{itemize}
+
+\section{Próxima fase}
+
+O plano para a próxima fase continua basicamente o mesmo, completando a
+implementação das instruções restantes e realizando a integração final. Um
+ponto, porém, merece maior atenção e deve ser discutido com o professor antes
+que se possa estabelecer a direção a ser tomada: trata-se das instruções de
+ponto flutuante.
+
+O grupo é da opinião de que, tendo em vista a complexidade de tais instruções
+(22 das 161 finais), o pouco tempo restante e as outras atividades ainda por
+serem feitas, a opção mais realista é não implementá-las.  A familiaridade
+adquirida na implementação das instruções com inteiros é perdida com as de
+ponto flutuante, requerendo um esforço inicial de compreensão que atrasaria
+nosso calendário para além do tempo limite. 
+
+Preferimos aproveitar um eventual tempo vago para o teste opcional sugerido,
+seja com autovetorização no GCC ou com a execução de um programa real escrito
+para o AltiVec. Esta decisão, porém, fica sujeita a discussão com o professor,
+em horário a ser combinado.
+
+\subsection{Fase 4}
+
+\begin{itemize}
+
+\item Durante essa fase termina o desenvolvimento de testes. \who{todos}
+
+\item Continua a atividade de implementação, implementando as instruções
+restantes. \who{todos, menos para quem estiver fazendo teste opcional se
+houver}
+
+\item Começa e termina a atividade de integração final. \who{todos}
+
+\item \emph{(opcional)} Se houver tempo, testar se funcionam as otimizações de
+autovetorização do GCC 4.x OU testar a execução de um programa real que use
+AltiVec. \who{1 pessoa}
+
+\item \textbf{Entrega 4 -- 26/Junho}, contendo uma versão com todas
+\textbf{161} instruções funcionando e testes para elas, e um relato do que foi
+desenvolvido durante a Fase 4. \who{todos}
+
+\end{itemize}
+
+\end{document}
+
+%:wq
