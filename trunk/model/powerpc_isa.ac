@@ -237,12 +237,12 @@ AC_ISA(powerpc) {
         vslh, vslw, vsrab, vsrah, vsraw, 
         vsrb, vsrh, vsrw, vand, vandc, 
         vnor, vor, vxor, vaddfp, vsubfp, 
-        vmaxfp, vinfp, vctsxs, vctuxs, vcfsx, 
+        vmaxfp, vminfp, vctsxs, vctuxs, vcfsx, 
         vcfux, vrfim, vrfin, vrfip, vrfiz; 
 
     ac_instr<AV_VX2> // 10
         vupkhpx, vupkhsb, vupkhsh, vupklpx, vupklsb,
-        vupklsh, vexptefp, vlogefp, vrefp, vsqrtefp; 
+        vupklsh, vexptefp, vlogefp, vrefp, vrsqrtefp; 
 
     ac_instr<AV_VX3> // 1
         vspltb;
@@ -265,7 +265,7 @@ AC_ISA(powerpc) {
     ac_instr<AV_VA1> // 13
         vperm, vsel, vmhaddshs, vmhraddshs, vmladduhm, 
         vmsumubm, vmsummbm, vmsumshm, vmsumshs, vmsumuhm, 
-        vmsumuhs, vmaddfp, vmsubfp;
+        vmsumuhs, vmaddfp, vnmsubfp;
 
     ac_instr<AV_VA2> // 1
         vsldoi;
@@ -1424,8 +1424,8 @@ AC_ISA(powerpc) {
         vmaxfp.set_asm("vmaxfp %vreg, %vreg, %vreg", vrt, vra, vrb);
         vmaxfp.set_decoder(opcd=4, xo=1034);
 
-        vinfp.set_asm("vinfp %vreg, %vreg, %vreg", vrt, vra, vrb);
-        vinfp.set_decoder(opcd=4, xo=1098);
+        vminfp.set_asm("vminfp %vreg, %vreg, %vreg", vrt, vra, vrb);
+        vminfp.set_decoder(opcd=4, xo=1098);
 
         vctsxs.set_asm("vctsxs %vreg, %vreg, %vreg", vrt, vra, vrb);
         vctsxs.set_decoder(opcd=4, xo=970);
@@ -1481,8 +1481,8 @@ AC_ISA(powerpc) {
         vrefp.set_asm("vrefp %vreg, %vreg", vrt, vrb);
         vrefp.set_decoder(opcd=4, xo=266);
 
-        vsqrtefp.set_asm("vsqrtefp %vreg, %vreg", vrt, vrb);
-        vsqrtefp.set_decoder(opcd=4, xo=330);
+        vrsqrtefp.set_asm("vrsqrtefp %vreg, %vreg", vrt, vrb);
+        vrsqrtefp.set_decoder(opcd=4, xo=330);
 
        // AV_VX3
 
@@ -1562,8 +1562,8 @@ AC_ISA(powerpc) {
         vmaddfp.set_asm("vmaddfp %vreg, %vreg, %vreg, %vreg", vrt, vra, vrb, vrc); 
         vmaddfp.set_decoder(opcd=4, xo6=46); 
 
-        vmsubfp.set_asm("vmsubfp %vreg, %vreg, %vreg, %vreg", vrt, vra, vrb, vrc); 
-        vmsubfp.set_decoder(opcd=4, xo6=47); 
+        vnmsubfp.set_asm("vnmsubfp %vreg, %vreg, %vreg, %vreg", vrt, vra, vrb, vrc); 
+        vnmsubfp.set_decoder(opcd=4, xo6=47); 
 
         // AV_AV2
 

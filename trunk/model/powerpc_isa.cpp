@@ -3313,6 +3313,13 @@ void ac_behavior( xoris )
 
 // AltiVec implementations
 
+#define NOT_IMPLEMENTED(name); \
+    void ac_behavior( name ) \
+    { \
+        fprintf(stderr, "WARNING: " #name " not implemented yet!\n"); \
+    } 
+
+
 typedef ac_multireg<unsigned long, 4> vec;
 typedef ac_regbank<32, ac_multireg<unsigned long, 4>, ac_multireg<unsigned long, 4> > vecbank;
 
@@ -6362,53 +6369,6 @@ void ac_behavior( vxor ){
     VR.write(vrt, t);
 }
 
-//!Instruction vaddfp behavior method.
-void ac_behavior( vaddfp ){}
-
-//!Instruction vsubfp behavior method.
-void ac_behavior( vsubfp ){}
-
-//!Instruction vmaxfp behavior method.
-void ac_behavior( vmaxfp ){}
-
-//!Instruction vinfp behavior method.
-void ac_behavior( vinfp ){}
-
-//!Instruction vctsxs behavior method.
-void ac_behavior( vctsxs ){}
-
-//!Instruction vctuxs behavior method.
-void ac_behavior( vctuxs ){}
-
-//!Instruction vcfsx behavior method.
-void ac_behavior( vcfsx ){}
-
-//!Instruction vcfux behavior method.
-void ac_behavior( vcfux ){}
-
-//!Instruction vrfim behavior method.
-void ac_behavior( vrfim ){}
-
-//!Instruction vrfin behavior method.
-void ac_behavior( vrfin ){}
-
-//!Instruction vrfip behavior method.
-void ac_behavior( vrfip ){}
-
-//!Instruction vrfiz behavior method.
-void ac_behavior( vrfiz ){}
-
-//!Instruction vexptefp behavior method.
-void ac_behavior( vexptefp ){}
-
-//!Instruction vlogefp behavior method.
-void ac_behavior( vlogefp ){}
-
-//!Instruction vrefp behavior method.
-void ac_behavior( vrefp ){}
-
-//!Instruction vsqrtefp behavior method.
-void ac_behavior( vsqrtefp ){}
 
 //!Instruction mtvscr behavior method.
 void ac_behavior( mtvscr ) {
@@ -6430,12 +6390,6 @@ void ac_behavior( mfvscr ) {
     t.data[3] = VSCR.read();
     VR.write(vrt, t);
 }
-
-//!Instruction vmaddfp behavior method.
-void ac_behavior( vmaddfp ){}
-
-//!Instruction vmsubfp behavior method.
-void ac_behavior( vmsubfp ){}
 
 void inline vcmpequb_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
 {
@@ -6727,31 +6681,35 @@ void ac_behavior( vcmpgtuw_ )
     vcmpgtuw_impl(CR, VR, 1, vrt, vra, vrb);
 }
 
-//!Instruction vcmpbfp behavior method.
-void ac_behavior( vcmpbfp ){}
 
-//!Instruction vcmpeqfp behavior method.
-void ac_behavior( vcmpeqfp ){}
+// AltiVec: Vector floating-point instructions are not yet implemented.
 
-//!Instruction vcmpgefp behavior method.
-void ac_behavior( vcmpgefp ){}
-
-//!Instruction vcmpgtfp behavior method.
-void ac_behavior( vcmpgtfp ){}
-
-//!Instruction vcmpbfp_ behavior method.
-void ac_behavior( vcmpbfp_ ){}
-
-//!Instruction vcmpeqfp_ behavior method.
-void ac_behavior( vcmpeqfp_ ){}
-
-//!Instruction vcmpgefp_ behavior method.
-void ac_behavior( vcmpgefp_ ){}
-
-//!Instruction vcmpgtfp_ behavior method.
-void ac_behavior( vcmpgtfp_ ){}
-
-
+NOT_IMPLEMENTED( vaddfp );
+NOT_IMPLEMENTED( vsubfp );
+NOT_IMPLEMENTED( vmaddfp );
+NOT_IMPLEMENTED( vnmsubfp );
+NOT_IMPLEMENTED( vmaxfp );
+NOT_IMPLEMENTED( vminfp );
+NOT_IMPLEMENTED( vctsxs );
+NOT_IMPLEMENTED( vctuxs );
+NOT_IMPLEMENTED( vcfsx );
+NOT_IMPLEMENTED( vcfux );
+NOT_IMPLEMENTED( vrfim );
+NOT_IMPLEMENTED( vrfip );
+NOT_IMPLEMENTED( vrfin );
+NOT_IMPLEMENTED( vrfiz );
+NOT_IMPLEMENTED( vcmpbfp );
+NOT_IMPLEMENTED( vcmpbfp_ );
+NOT_IMPLEMENTED( vcmpeqfp );
+NOT_IMPLEMENTED( vcmpeqfp_ );
+NOT_IMPLEMENTED( vcmpgefp );
+NOT_IMPLEMENTED( vcmpgefp_ );
+NOT_IMPLEMENTED( vcmpgtfp );
+NOT_IMPLEMENTED( vcmpgtfp_ );
+NOT_IMPLEMENTED( vexptefp );
+NOT_IMPLEMENTED( vlogefp );
+NOT_IMPLEMENTED( vrefp );
+NOT_IMPLEMENTED( vrsqrtefp );
 
 
 // vim: sw=4 ts=4 sts=4 et
