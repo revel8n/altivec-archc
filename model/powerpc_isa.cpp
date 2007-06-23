@@ -3658,31 +3658,27 @@ void ac_behavior( vupklsh ){}
 void ac_behavior( vspltb ){}
 
 //!Instruction vsplth behavior method.
-// Reservado por Ribamar
+// Vector Splat Halfword - powerisa spec pag 151. 
 void ac_behavior( vsplth ){
     
-    dbg_printf(" vspltw v%d, v%d, %d\n\n", vrt, vrb, uim1);
+    dbg_printf(" vsplth v%d, v%d, %d\n\n", vrt, vrb, uim3);
+    printf(" vsplth v%d, v%d, %d\n\n", vrt, vrb, uim3);
     vec t;
-    vec a = VR.read(vrb);
     vec b = VR.read(vrb);
+    int ind = uim3 / 2;
+    int k = 16;  //  shifts de sizeof(HALFWORD). 
+    uint16_t b_uim3 = (b.data[ind] << k*(uim3 % 2)) >> k; 
+    //uint16_t b_uim3 = (b.data[ind] << k*((uim3+1) % 2)) >> k; 
+    uint32_t t_i =  ((uint32_t)b_uim3 << k) + b_uim3; 
+    printf("b= 0x%x, ind = %d,  uim3=  %d,  b_uim3 = 0x%x\n", 
+            (short int)b.data[ind], 
+            ind, 
+            uim3, 
+            (short int)b_uim3); 
 
     for (int i = 0; i < 4; i++){
-        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
-        uint16_t a_i_0 = (a.data[i] << k) >> k; 
-        uint16_t a_i_1 = (a.data[i] >> k); 
-        uint16_t b_i_0 = (b.data[i] << k) >> k; 
-        uint16_t b_i_1 = (b.data[i] >> k); 
-        uint16_t t_0 =  (a_i_0 > b_i_0 ? a_i_0 : b_i_0) ; 
-        uint16_t t_1 =  (a_i_1 > b_i_1 ? a_i_1 : b_i_1) ; 
-        uint32_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = %X, ", a_i_0); 
-        printf("a_1 = %X, ", a_i_1); 
-        printf("b_0 = %X, ", b_i_0); 
-        printf("b_1 = %X, ", b_i_1); 
-        printf("t_0 = %X, ", t_0); 
-        printf("t_1 = %X, ", t_1); 
         printf("t_i = %X \n\n", t_i); 
     }
 
