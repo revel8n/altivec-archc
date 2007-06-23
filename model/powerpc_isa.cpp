@@ -3605,21 +3605,27 @@ void ac_behavior( vpkuhus ){}
 void ac_behavior( vpkuwus ){}
 
 //!Instruction vmrghb behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrghb ){}
 
 //!Instruction vmrghw behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrghw ){}
 
 //!Instruction vmrghh behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrghh ){}
 
 //!Instruction vmrglb behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrglb ){}
 
 //!Instruction vmrglw behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrglw ){}
 
 //!Instruction vmrglh behavior method.
+// Reservado por Ribamar
 void ac_behavior( vmrglh ){}
 
 //!Instruction vupkhpx behavior method.
@@ -4169,11 +4175,6 @@ void ac_behavior( vsubsbs ){
                 neg_saturated = (abs(bt) > 0x80);
                 printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
             }
-            //FIXME: strangely this doesn't work, can anyone explain:
-            //neg_saturated = (t_i_i < -1*0x80000000);
-            //neither this:
-            //neg_saturated = (t_i_i < -2147483648);
-            //see the fixme before.
             bool saturated = pos_saturated || neg_saturated;
             uint8_t t_i =
                 (uint8_t)(saturated ?
@@ -4224,11 +4225,6 @@ void ac_behavior( vsubshs ){
                 neg_saturated = (abs(bt) > 0x8000);
                 printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
             }
-            //FIXME: strangely this doesn't work, can anyone explain:
-            //neg_saturated = (t_i_i < -1*0x80000000);
-            //neither this:
-            //neg_saturated = (t_i_i < -2147483648);
-            //see the fixme before.
             bool saturated = pos_saturated || neg_saturated;
             uint16_t t_i =
                 (uint16_t)(saturated ?
@@ -4278,11 +4274,6 @@ void ac_behavior( vsubsws ){
            neg_saturated = (abs(bt) > 0x80000000);
            printf("bt < 0; neg_saturated: %s\n",neg_saturated?"true":"false");
        }
-       //FIXME: strangely this doesn't work, can anyone explain:
-       //neg_saturated = (t_i_i < -1*0x80000000);
-       //neither this:
-       //neg_saturated = (t_i_i < -2147483648);
-       //see the fixme before.
        bool saturated = pos_saturated || neg_saturated;
        uint32_t t_i =
            (uint32_t)(saturated ?
@@ -6016,15 +6007,6 @@ void ac_behavior( vmsumshs ){
         bool pos_saturated = false; 
         bool neg_saturated = false; 
         printf("t_i_i = %ld.\n" , t_i_i); 
-        /*FIXME: WORRIED! With the test vmsumshs-1 I got this piece of code: 
-        if(t_i_i < -2147483648){
-            printf(" %ld is lesser then -2147483648.\n" , t_i_i);
-        }
-        to show this:
-        "-2147483648 is lesser then -2147483648"
-        something related to this warning: 
-        powerpc_isa.cpp:4619: warning: this decimal constant is unsigned only in ISO C90
-        */
         if ( t_i_i >= 0){
             if(t_i_i < 0) 
                 printf("* ERROR! WRONG! pos and neg!\n"); 
@@ -6034,11 +6016,6 @@ void ac_behavior( vmsumshs ){
         else
             // -0x8000_0000 ==  -2^31
             neg_saturated = (abs(t_i_i) > 0x80000000); 
-            //FIXME: strangely this doesn't work, can anyone explain:
-            //neg_saturated = (t_i_i < -1*0x80000000); 
-            //neither this: 
-            //neg_saturated = (t_i_i < -2147483648); 
-            //see the fixme before. 
         bool saturated = pos_saturated || neg_saturated; 
         uint32_t t_i = 
                 (uint32_t)(saturated ? 
