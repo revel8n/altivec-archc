@@ -3647,9 +3647,11 @@ void ac_behavior( vupklsb ){}
 void ac_behavior( vupklsh ){}
 
 //!Instruction vspltb behavior method.
+// Reservado por Ribamar
 void ac_behavior( vspltb ){}
 
 //!Instruction vsplth behavior method.
+// Reservado por Ribamar
 void ac_behavior( vsplth ){}
 
 //!Instruction vspltw behavior method.
@@ -3668,10 +3670,38 @@ void ac_behavior( vspltw ) {
 }
 
 //!Instruction vspltb behavior method.
+// Reservado por Ribamar
 void ac_behavior( vspltisb ){}
 
 //!Instruction vsplth behavior method.
-void ac_behavior( vspltish ){}
+// Reservado por Ribamar
+void ac_behavior( vspltish ){
+
+    dbg_printf("vspltish v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t; 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i = 0 ; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        uint16_t a_i_0 =  (uint16_t) ((a.data[i] << k) >> k); 
+        uint16_t b_i_0 =  (uint16_t) ((b.data[i] << k) >> k); 
+        uint16_t a_i_1 =  (uint16_t) ((a.data[i] >> k)); 
+        uint16_t b_i_1 =  (uint16_t) ((b.data[i] >> k)); 
+        uint16_t t_0 = uint16_t ( (((uint32_t)a_i_0 + (uint32_t)b_i_0)+1) >> 1);
+        uint16_t t_1 = uint16_t ( (((uint32_t)a_i_1 + (uint32_t)b_i_1)+1) >> 1); 
+        uint64_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
+        t.data[i] = t_i; 
+        printf("(%u + %u)/2 = %u \n", a_i_0, b_i_0, t_0); 
+        printf("(%u + %u)/2 = %u \n", a_i_1, b_i_1, t_1); 
+        printf("t_0 = %#X t_1 = %#X, t_i = %#X \n\n", t_0, t_1, t_i); 
+
+    }
+
+    VR.write(vrt, t); 
+
+}
 
 //!Instruction vspltw behavior method.
 void ac_behavior( vspltisw ) {
@@ -4647,8 +4677,6 @@ void ac_behavior( vavgsh ){
         int16_t a_i_1 = (int16_t) ((a.data[i] << 0) >> k); 
         int16_t b_i_0 = (int16_t) ((b.data[i] << k) >> k); 
         int16_t b_i_1 = (int16_t) ((b.data[i] << 0) >> k); 
-        //uint16_t t_0 = (uint16_t) ( (((int32_t)a_i_0 + (int32_t)b_i_0)+1) >> 1);
-        //uint16_t t_1 = (uint16_t) ( (((int32_t)a_i_1 + (int32_t)b_i_1)+1) >> 1); 
         int16_t t_0 = (int16_t) ( (((int32_t)a_i_0 + (int32_t)b_i_0)+1) >> 1);
         int16_t t_1 = (int16_t) ( (((int32_t)a_i_1 + (int32_t)b_i_1)+1) >> 1); 
         uint64_t t_i =  ((uint32_t)t_1 <<  k) +  (uint16_t)t_0 ; 
