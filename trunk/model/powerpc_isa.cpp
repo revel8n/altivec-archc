@@ -3652,7 +3652,35 @@ void ac_behavior( vspltb ){}
 
 //!Instruction vsplth behavior method.
 // Reservado por Ribamar
-void ac_behavior( vsplth ){}
+void ac_behavior( vsplth ){
+    
+    dbg_printf(" vspltw v%d, v%d, %d\n\n", vrt, vrb, uim1);
+    vec t;
+    vec a = VR.read(vrb);
+    vec b = VR.read(vrb);
+
+    for (int i = 0; i < 4; i++){
+        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
+        uint16_t a_i_0 = (a.data[i] << k) >> k; 
+        uint16_t a_i_1 = (a.data[i] >> k); 
+        uint16_t b_i_0 = (b.data[i] << k) >> k; 
+        uint16_t b_i_1 = (b.data[i] >> k); 
+        uint16_t t_0 =  (a_i_0 > b_i_0 ? a_i_0 : b_i_0) ; 
+        uint16_t t_1 =  (a_i_1 > b_i_1 ? a_i_1 : b_i_1) ; 
+        uint32_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf("a_0 = %X, ", a_i_0); 
+        printf("a_1 = %X, ", a_i_1); 
+        printf("b_0 = %X, ", b_i_0); 
+        printf("b_1 = %X, ", b_i_1); 
+        printf("t_0 = %X, ", t_0); 
+        printf("t_1 = %X, ", t_1); 
+        printf("t_i = %X \n\n", t_i); 
+    }
+
+    VR.write(vrt, t); 
+}
 
 //!Instruction vspltw behavior method.
 void ac_behavior( vspltw ) {
@@ -3677,29 +3705,6 @@ void ac_behavior( vspltisb ){}
 // Reservado por Ribamar
 void ac_behavior( vspltish ){
 
-    dbg_printf("vspltish v%d, v%d, v%d\n\n", vrt, vra, vrb);
-
-    vec t; 
-    vec a = VR.read(vra);
-    vec b = VR.read(vrb);
-
-    for (int i = 0 ; i < 4; i++){
-        int k = 16 ;  //  shifts de sizeof(HALFWORD). 
-        uint16_t a_i_0 =  (uint16_t) ((a.data[i] << k) >> k); 
-        uint16_t b_i_0 =  (uint16_t) ((b.data[i] << k) >> k); 
-        uint16_t a_i_1 =  (uint16_t) ((a.data[i] >> k)); 
-        uint16_t b_i_1 =  (uint16_t) ((b.data[i] >> k)); 
-        uint16_t t_0 = uint16_t ( (((uint32_t)a_i_0 + (uint32_t)b_i_0)+1) >> 1);
-        uint16_t t_1 = uint16_t ( (((uint32_t)a_i_1 + (uint32_t)b_i_1)+1) >> 1); 
-        uint64_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
-        t.data[i] = t_i; 
-        printf("(%u + %u)/2 = %u \n", a_i_0, b_i_0, t_0); 
-        printf("(%u + %u)/2 = %u \n", a_i_1, b_i_1, t_1); 
-        printf("t_0 = %#X t_1 = %#X, t_i = %#X \n\n", t_0, t_1, t_i); 
-
-    }
-
-    VR.write(vrt, t); 
 
 }
 
