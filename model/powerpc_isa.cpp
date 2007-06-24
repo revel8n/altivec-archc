@@ -3791,7 +3791,7 @@ void ac_behavior( vspltish ){
 
 //!Instruction vspltw behavior method.
 void ac_behavior( vspltisw ) {
-    dbg_printf(" vspltisw v%d, %d\n\n", vrt, vrb, sim);
+    dbg_printf(" vspltisw v%d, %d\n\n", vrt, sim);
 
     vec t(0);
     uint32_t value  = (uint32_t) sim;
