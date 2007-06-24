@@ -47,6 +47,8 @@
 //#define DEBUG_MODEL
 #include  "ac_debug_model.H"
 
+#include <inttypes.h>
+
 using namespace powerpc_parms;
 
 //Compute CR0 fields LT, GT, EQ, SO
@@ -3944,8 +3946,8 @@ void ac_behavior( vsro ){
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
     */
-    vec a = VR.read(vrb);
-    vec b = VR.read(vra);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
     // 0xf0: bit 121 ->  1111_0000 <- bit 128
     uint8_t shb =  (b.data[4] & 0xf0) >> 4; 
     printf("b[4] = 0x%x,  shb = 0x%x\n", (int)b.data[4], (char)shb); 
@@ -4699,7 +4701,43 @@ void ac_behavior( vmulouh )
 }
 
 //!Instruction vsumsws behavior method.
-void ac_behavior( vsumsws ){}
+void ac_behavior( vsumsws ) {
+    dbg_printf(" vsumsws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    int32_t wa, wb;
+    int64_t sum = 0;
+    uint32_t raw;
+    int saturated = 0;
+   
+    wb = (int32_t) b.data[3];
+    sum = (int64_t) wb;
+   
+    for (i = 0; i < 4; i++) {
+        wa = (int32_t) a.data[i];
+        sum = sum + ((int64_t) wa);
+    }
+    
+    // Check for saturation, equivalent to CLAMP
+    if (abs(sum) > 0x080000000) {
+        raw = 0x80000000;
+        saturated++;
+    } else if (sum > 0x7FFFFFFF) {
+        raw = 0x7FFFFFFF;
+        saturated++;
+    } else {
+        raw = (uint32_t) sum;
+    }
+
+    t.data[3] = raw;
+    
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vsum2sws behavior method.
 void ac_behavior( vsum2sws ){}
