@@ -3942,22 +3942,25 @@ void ac_behavior( vsro ){
     printf(" vsro vrt = v%d, vra = v%d, vrb =v%d\n\n", vrt, vra, vrb);
 
     vec t(0);
-    /* FIXME: CRAAAAAAAAAAAAAZZYY!!! I had to change them. 
-    vec a = VR.read(vra);
-    vec b = VR.read(vrb);
-    */
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
     // 0xf0: bit 121 ->  1111_0000 <- bit 128
-    uint8_t shb =  (b.data[4] & 0xf0) >> 4; 
-    printf("b[4] = 0x%x,  shb = 0x%x\n", (int)b.data[4], (char)shb); 
+    uint8_t shb =  (b.data[3] & 0xf0) >> 4; 
+    printf("b[3] = 0x%x,  shb = 0x%x = %d\n", (int)b.data[3], (char)shb, shb); 
 
-    uint64_t  r = (a.data[0] << 32) + a.data[1] ; 
-    uint64_t  s = (a.data[2] << 32) + a.data[3] ; 
-    printf("r = 0x%x,  s = 0x%x\n", (long int)r, (long int)s); 
+    uint64_t  r = ((uint64_t)a.data[1] << 32) + (uint64_t)a.data[0] ; 
+    uint64_t  s = ((uint64_t)a.data[3] << 32) + (uint64_t)a.data[2] ; 
+    //it seems impossible to printf 64bit hexa, so I need these: 
+    uint32_t  t_0 = (uint32_t)  r >> 32; 
+    uint32_t  t_1 = (uint32_t)  r; 
+    uint32_t  t_2 = (uint32_t)  s >> 32; 
+    uint32_t  t_3 = (uint32_t)  s; 
+    printf("r = 0x%x_%x,  s = 0x%x_%x\n", (int)t_0, (int)t_1, 
+            (int)t_2, (int)t_3); 
+             
+    printf("t_0 = 0x%x\n", (int)t_0); 
     r = r >> -8; 
-    printf("r = 0x%x\n", (long int)r); 
-
+    printf("t_0 >> -8 = 0x%x\n", (int)t_0); 
 
 
 }
