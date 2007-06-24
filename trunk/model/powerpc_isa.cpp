@@ -3729,8 +3729,8 @@ void ac_behavior( vspltisb ){}
 // Vector Splat Immediate Signed Halfword - powerisa spec pag 151. 
 void ac_behavior( vspltish ){
 
-    dbg_printf(" vspltisw v%d, %d\n\n", vrt, vrb, sim);
-    printf(" vspltisw v%d, %d\n\n", vrt, vrb, sim);
+    dbg_printf(" vspltisw v%d, %d\n\n", vrt, sim);
+    printf(" vspltisw v%d, %d\n\n", vrt,  sim);
 
     vec t(0);
     uint16_t value  = (uint16_t) sim;
