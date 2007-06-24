@@ -3654,21 +3654,42 @@ void ac_behavior( vupklsb ){}
 void ac_behavior( vupklsh ){}
 
 //!Instruction vspltb behavior method.
-// Reservado por Ribamar
-void ac_behavior( vspltb ){}
+// Vector Splat Byte - powerisa spec pag 151. 
+void ac_behavior( vspltb ){
+    
+    dbg_printf(" vspltb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    vec t;
+    vec b = VR.read(vrb);
+    int ind = uim4 / 4;
+    int k = 8;  //  shifts de sizeof(BYTE). 
+    uint8_t b_uim4 = (b.data[ind] << k*(uim4 % 4)) >> 3*k; 
+    uint32_t t_i =  (b_uim4 << 3*k) + (b_uim4 << 2*k) + 
+                     (b_uim4 << k)  +   b_uim4; 
+    printf("b[%d]= 0x%x,  uim4=  %d,  b_uim4 = 0x%x\n", 
+            ind, 
+            (unsigned int)b.data[ind], 
+            uim4, 
+            (short int)b_uim4); 
+
+    for (int i = 0; i < 4; i++){
+        t.data[i] = t_i; 
+        //dbg_printf: 
+        printf("t_i = %X \n\n", t_i); 
+    }
+
+    VR.write(vrt, t); 
+}
 
 //!Instruction vsplth behavior method.
 // Vector Splat Halfword - powerisa spec pag 151. 
 void ac_behavior( vsplth ){
     
     dbg_printf(" vsplth v%d, v%d, %d\n\n", vrt, vrb, uim3);
-    printf(" vsplth v%d, v%d, %d\n\n", vrt, vrb, uim3);
     vec t;
     vec b = VR.read(vrb);
     int ind = uim3 / 2;
     int k = 16;  //  shifts de sizeof(HALFWORD). 
     uint16_t b_uim3 = (b.data[ind] << k*(uim3 % 2)) >> k; 
-    //uint16_t b_uim3 = (b.data[ind] << k*((uim3+1) % 2)) >> k; 
     uint32_t t_i =  ((uint32_t)b_uim3 << k) + b_uim3; 
     printf("b= 0x%x, ind = %d,  uim3=  %d,  b_uim3 = 0x%x\n", 
             (short int)b.data[ind], 
