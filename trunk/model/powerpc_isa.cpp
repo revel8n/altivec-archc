@@ -3723,14 +3723,43 @@ void ac_behavior( vspltw ) {
 
 //!Instruction vspltb behavior method.
 // Vector Splat Immediate Signed Byte - powerisa spec pag 151. 
-void ac_behavior( vspltisb ){}
+void ac_behavior( vspltisb ){
+
+    dbg_printf(" vspltisb v%d, %d\n\n", vrt, sim);
+    printf(" vspltisb v%d, %d\n\n", vrt,  sim);
+
+    vec t(0);
+    uint8_t value  = (uint8_t) sim;
+    uint8_t  signal = value >> 4;
+
+    printf("value = %#x, signal = %#x, sim = %#x\n", 
+           (char)value, 
+           (char)signal, 
+           (char)sim);
+
+    if (signal) {
+        value |= 0xE0;
+    }
+
+    uint32_t t_i = (value << 24) + (value << 16) + (value << 8) + value; 
+
+    printf("value = %#x = %d\n", (char)value, (signed int)value);
+    printf("t_i = %#x\n\n", t_i); 
+
+    for (int i = 0; i < 4; i++) {
+        t.data[i] = t_i;
+    }
+
+    VR.write(vrt, t);
+
+
+}
 
 //!Instruction vsplth behavior method.
 // Vector Splat Immediate Signed Halfword - powerisa spec pag 151. 
 void ac_behavior( vspltish ){
 
     dbg_printf(" vspltish v%d, %d\n\n", vrt, sim);
-    printf(" vspltish v%d, %d\n\n", vrt,  sim);
 
     vec t(0);
     uint16_t value  = (uint16_t) sim;
