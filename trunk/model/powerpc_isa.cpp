@@ -4005,7 +4005,7 @@ void ac_behavior( vaddsbs ) {
          
             bt = (int16_t) ba + (int16_t) bb;
 
-            if (abs(bt) > 0x80) {
+            if ((bt < 0) && (abs(bt) > 0x80)) {
                 raw = 0x80;
                 saturated++;
             } else if (bt > 0x7F) {
@@ -4046,7 +4046,7 @@ void ac_behavior( vaddshs )
          
             bt = (int32_t) ba + (int32_t) bb;
 
-            if (abs(bt) > 0x8000) {
+            if ((bt < 0) && (abs(bt) > 0x8000)) {
                 raw = 0x8000;
                 saturated++;
             } else if (bt > 0x7FFF) {
@@ -4085,8 +4085,8 @@ void ac_behavior( vaddsws )
 
         sum = (int64_t) wa + (int64_t) wb;
 
-        if (abs(sum) > 0x080000000) {
-            printf("0x%08X\n", abs(sum));
+        if ((sum < 0) && (abs(sum) > 0x080000000)) {
+            dbg_printf("abs(sum) = 0x%08X\n", abs(sum));
             raw = 0x80000000;
             saturated++;
         } else if (sum > 0x7FFFFFFF) {
@@ -4726,7 +4726,7 @@ void ac_behavior( vsumsws ) {
     }
     
     // Check for saturation, equivalent to CLAMP
-    if (abs(sum) > 0x080000000) {
+    if ((sum < 0) && (abs(sum) > 0x080000000)) {
         raw = 0x80000000;
         saturated++;
     } else if (sum > 0x7FFFFFFF) {
