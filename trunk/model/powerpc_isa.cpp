@@ -3934,7 +3934,31 @@ void ac_behavior( vsr ){
 }
 
 //!Instruction vsro behavior method.
-void ac_behavior( vsro ){}
+// Vector Shift Right by Octet - powerisa spec pag 154. 
+void ac_behavior( vsro ){
+    dbg_printf(" vsro v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    printf(" vsro vrt = v%d, vra = v%d, vrb =v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    /* FIXME: CRAAAAAAAAAAAAAZZYY!!! I had to change them. 
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    */
+    vec a = VR.read(vrb);
+    vec b = VR.read(vra);
+    // 0xf0: bit 121 ->  1111_0000 <- bit 128
+    uint8_t shb =  (b.data[4] & 0xf0) >> 4; 
+    printf("b[4] = 0x%x,  shb = 0x%x\n", (int)b.data[4], (char)shb); 
+
+    uint64_t  r = (a.data[0] << 32) + a.data[1] ; 
+    uint64_t  s = (a.data[2] << 32) + a.data[3] ; 
+    printf("r = 0x%x,  s = 0x%x\n", (long int)r, (long int)s); 
+    r = r >> -8; 
+    printf("r = 0x%x\n", (long int)r); 
+
+
+
+}
 
 //!Instruction vaddcuw behavior method.
 void ac_behavior( vaddcuw ){
