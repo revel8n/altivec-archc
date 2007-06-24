@@ -4743,7 +4743,48 @@ void ac_behavior( vsumsws ) {
 }
 
 //!Instruction vsum2sws behavior method.
-void ac_behavior( vsum2sws ){}
+void ac_behavior( vsum2sws )
+{
+    dbg_printf(" vsum2sws v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int part, i;
+    int32_t wa, wb;
+    int64_t sum = 0;
+    uint32_t raw;
+    int saturated = 0;
+  
+    for (part = 0; part < 4; part += 2) {
+        wb = (int32_t) b.data[part + 1];
+        sum = (int64_t) wb;
+    
+        for (i = part; i < part + 2; i++) {
+            wa = (int32_t) a.data[i];
+            sum = sum + ((int64_t) wa);
+        }
+        
+        dbg_printf("sum = %#016lx\tabs(sum) = %#016lx\n", sum, abs(sum));
+        
+        // Check for saturation, equivalent to CLAMP
+        if ((sum < 0) && (abs(sum) > -0x80000000)) {
+            raw = 0x80000000;
+            saturated++;
+        } else if (sum > 0x7FFFFFFF) {
+            raw = 0x7FFFFFFF;
+            saturated++;
+        } else {
+            raw = (uint32_t) sum;
+        }
+
+        t.data[part + 1] = raw;
+    }
+    
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vsum4sbs behavior method.
 void ac_behavior( vsum4sbs ){}
