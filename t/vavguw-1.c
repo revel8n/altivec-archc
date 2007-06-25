@@ -1,3 +1,5 @@
+#include "test.h"
+
 int main() {
 
 	/*vra.data[0] e vrb.data[0]*/
@@ -40,24 +42,16 @@ int main() {
 
 
 	asm("vavguw 1, 2, 3; ");
-	//asm("vmaxuh  1, 2, 3; ");
-	//asm("vmaxuw  1, 2, 3; ");
-	//asm("vmaxsw  1, 2, 3; ");
 
+        uint32_t i, j, k, l;
+        uint32_t m, n, o, p;
+        STORE_VECTOR_U(1, l, k, j, i);
 
-	return 0;
+        m = 0x00008000;
+        n = 0x7fff8000;
+        o = 0x80000000;
+        p = 0x00000000;
+
+        return !(i == m && j == n && k == o && l == p);
+
 }
-/*
-	asm("li 3, 0; "
-	    "li 2, 2000; "
-	    "lvewx 2, 3, 2; ");
-
-	int base = 2000, step=4, q=4, 
-	    vec_a[] = {10,  73, -12, 0}, 
-	    vec_b[] = { 1, -73,   2, 0}; 
-	str ad[256]; 
-	for (int i=0; i < q; i++){
-		sprintf(ad, "li 2, %d; \n"
-		            "lvewx 2, 0, 2; \n", base + i*step);
-	}
-*/

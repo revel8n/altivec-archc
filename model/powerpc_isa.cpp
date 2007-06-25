@@ -5097,27 +5097,27 @@ void ac_behavior( vavgsb ){
                      + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("(a_0 = %ld + b_0 = %ld)/ 2 = %ld\n ", 
+        dbg_printf("(a_0 = %ld + b_0 = %ld)/ 2 = %ld\n ", 
                        a_i_0, 
                        b_i_0, 
                          t_0); 
-        printf("(a_1 = %ld + b_1 = %ld)/ 2 = %ld\n ", 
+        dbg_printf("(a_1 = %ld + b_1 = %ld)/ 2 = %ld\n ", 
                        a_i_1, 
                        b_i_1, 
                          t_1); 
-        printf("(a_2 = %ld + b_2 = %ld)/ 2 = %ld\n ", 
+        dbg_printf("(a_2 = %ld + b_2 = %ld)/ 2 = %ld\n ", 
                        a_i_2, 
                        b_i_2, 
                          t_2); 
-        printf("(a_3 = %ld + b_3 = %ld)/ 2 = %ld\n ", 
+        dbg_printf("(a_3 = %ld + b_3 = %ld)/ 2 = %ld\n ", 
                        a_i_3, 
                        b_i_3, 
                          t_3); 
-        printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
+        dbg_printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
                                       (unsigned char) t_2, 
                                       (unsigned char) t_1,
                                       (unsigned char) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
                       //(unsigned char) b_i_3, 
     }
     VR.write(vrt, t); 
@@ -5144,9 +5144,9 @@ void ac_behavior( vavgsh ){
         uint64_t t_i =  ((uint32_t)t_1 <<  k) +  (uint16_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_0, b_i_0, (signed long)t_0); 
-        printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_1, b_i_1, (signed long)t_1); 
-        printf("t_0 = %#x t_1 = %#x, t_i = %#x \n\n", t_0, t_1, t_i); 
+        dbg_printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_0, b_i_0, (signed long)t_0); 
+        dbg_printf(" ((%ld) + (%ld))/2 = %ld \n", a_i_1, b_i_1, (signed long)t_1); 
+        dbg_printf("t_0 = %#x t_1 = %#x, t_i = %#x \n\n", t_0, t_1, t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5167,8 +5167,8 @@ void ac_behavior( vavgsw ){
         int64_t t_i =  int64_t ( (((int64_t)a_i + (int64_t)b_i) + 1) >> 1); 
         t.data[i] = (uint64_t) t_i; 
         //dbg_printf: 
-        printf("((%ld) + (%ld))/2 = %ld \t", a_i, b_i, t_i); 
-        printf("t.data[i] = %ld \n", t.data[i]);
+        dbg_printf("((%ld) + (%ld))/2 = %ld \t", a_i, b_i, t_i); 
+        dbg_printf("t.data[i] = %ld \n", t.data[i]);
     }
     VR.write(vrt, t); 
 }
@@ -5203,27 +5203,27 @@ void ac_behavior( vavgub ){
                      + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("(a_0 = %#x + b_0 = %#x)/ 2 = %#x\n ", 
+        dbg_printf("(a_0 = %#x + b_0 = %#x)/ 2 = %#x\n ", 
                       (unsigned char) a_i_0, 
                       (unsigned char) b_i_0, 
                       (unsigned char)   t_0); 
-        printf("(a_1 = %#x + b_1 = %#x)/ 2 = %#x\n ", 
+        dbg_printf("(a_1 = %#x + b_1 = %#x)/ 2 = %#x\n ", 
                       (unsigned char) a_i_1, 
                       (unsigned char) b_i_1, 
                       (unsigned char)   t_1); 
-        printf("(a_2 = %#x + b_2 = %#x)/ 2 = %#x\n ", 
+        dbg_printf("(a_2 = %#x + b_2 = %#x)/ 2 = %#x\n ", 
                       (unsigned char) a_i_2, 
                       (unsigned char) b_i_2, 
                       (unsigned char)   t_2); 
-        printf("(a_3 = %#x + b_3 = %#x)/ 2 = %#x\n ", 
+        dbg_printf("(a_3 = %#x + b_3 = %#x)/ 2 = %#x\n ", 
                       (unsigned char) a_i_3, 
                       (unsigned char) b_i_3, 
                       (unsigned char)   t_3); 
-        printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
+        dbg_printf("t = {%#x,%#x,%#x,%#x}, ", (unsigned char) t_3, 
                                       (unsigned char) t_2, 
                                       (unsigned char) t_1,
                                       (unsigned char) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5251,9 +5251,9 @@ void ac_behavior( vavguh ){
         //dbg_printf: 
         //printf("(%#X + %#X)/2 = %#X \n", a_i_0, b_i_0, t_0); 
         //printf("(%#X + %#X)/2 = %#X \n", a_i_1, b_i_1, t_1); 
-        printf("(%u + %u)/2 = %u \n", a_i_0, b_i_0, t_0); 
-        printf("(%u + %u)/2 = %u \n", a_i_1, b_i_1, t_1); 
-        printf("t_0 = %#X t_1 = %#X, t_i = %#X \n\n", t_0, t_1, t_i); 
+        dbg_printf("(%u + %u)/2 = %u \n", a_i_0, b_i_0, t_0); 
+        dbg_printf("(%u + %u)/2 = %u \n", a_i_1, b_i_1, t_1); 
+        dbg_printf("t_0 = %#X t_1 = %#X, t_i = %#X \n\n", t_0, t_1, t_i); 
 
     }
 
@@ -5276,7 +5276,7 @@ void ac_behavior( vavguw ){
         sum++; 
         t.data[i] = sum >> 1; 
         //printf("0x%x + 0x%x = 0x%x / 2 \n", a.data[i], 
-        printf("(%u + %u)/2 = %u \n", a.data[i], 
+        dbg_printf("(%u + %u)/2 = %u \n", a.data[i], 
                                b.data[i], t.data[i]); 
     }
 
@@ -5313,21 +5313,21 @@ void ac_behavior( vmaxsb ){
                      + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X,%X,%X}, ", 
                       (unsigned char) a_i_3, 
                       (unsigned char) a_i_2, 
                       (unsigned char) a_i_1, 
                       (unsigned char) a_i_0); 
-        printf("b_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("b_0 = {%X,%X,%X,%X}, ", 
                       (unsigned char) b_i_3, 
                       (unsigned char) b_i_2, 
                       (unsigned char) b_i_1, 
                       (unsigned char) b_i_0); 
-        printf("t = {%X,%X,%X,%X}, ", (unsigned char) t_3, 
+        dbg_printf("t = {%X,%X,%X,%X}, ", (unsigned char) t_3, 
                                       (unsigned char) t_2, 
                                       (unsigned char) t_1,
                                       (unsigned char) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5354,15 +5354,15 @@ void ac_behavior( vmaxsh ){
         uint64_t t_i =  ((uint32_t)t_1 <<  k) +  (uint16_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X}, ", 
                       (unsigned short) a_i_1, 
                       (unsigned short) a_i_0); 
-        printf("b_0 = {%X,%X}, ", 
+        dbg_printf("b_0 = {%X,%X}, ", 
                       (unsigned short) b_i_1, 
                       (unsigned short) b_i_0); 
-        printf("t = {%X,%X}, ", (unsigned short) t_1, 
+        dbg_printf("t = {%X,%X}, ", (unsigned short) t_1, 
                                       (unsigned short) t_0); 
-        printf("t_i = %X \n\n", t_i); 
+        dbg_printf("t_i = %X \n\n", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5419,12 +5419,12 @@ void ac_behavior( vmaxub ){
                      + ((uint16_t)t_1 <<   k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X,%X,%X}, ", 
                      a_i_3, a_i_2, a_i_1, a_i_0); 
-        printf("b_0 = {%X,%X,%X,%X}, ",
+        dbg_printf("b_0 = {%X,%X,%X,%X}, ",
                      b_i_3, b_i_2, b_i_1, b_i_0); 
-        printf("t = {%X,%X,%X,%X}, ", t_3, t_2, t_1, t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t = {%X,%X,%X,%X}, ", t_3, t_2, t_1, t_0); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5449,13 +5449,13 @@ void ac_behavior( vmaxuh ){
         uint32_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = %X, ", a_i_0); 
-        printf("a_1 = %X, ", a_i_1); 
-        printf("b_0 = %X, ", b_i_0); 
-        printf("b_1 = %X, ", b_i_1); 
-        printf("t_0 = %X, ", t_0); 
-        printf("t_1 = %X, ", t_1); 
-        printf("t_i = %X \n\n", t_i); 
+        dbg_printf("a_0 = %X, ", a_i_0); 
+        dbg_printf("a_1 = %X, ", a_i_1); 
+        dbg_printf("b_0 = %X, ", b_i_0); 
+        dbg_printf("b_1 = %X, ", b_i_1); 
+        dbg_printf("t_0 = %X, ", t_0); 
+        dbg_printf("t_1 = %X, ", t_1); 
+        dbg_printf("t_i = %X \n\n", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5512,21 +5512,21 @@ void ac_behavior( vminsb ){
                      + ((uint16_t)t_1 <<   k) +  (uint8_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X,%X,%X}, ", 
                       (unsigned char) a_i_3, 
                       (unsigned char) a_i_2, 
                       (unsigned char) a_i_1, 
                       (unsigned char) a_i_0); 
-        printf("b_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("b_0 = {%X,%X,%X,%X}, ", 
                       (unsigned char) b_i_3, 
                       (unsigned char) b_i_2, 
                       (unsigned char) b_i_1, 
                       (unsigned char) b_i_0); 
-        printf("t = {%X,%X,%X,%X}, ", (unsigned char) t_3, 
+        dbg_printf("t = {%X,%X,%X,%X}, ", (unsigned char) t_3, 
                                       (unsigned char) t_2, 
                                       (unsigned char) t_1,
                                       (unsigned char) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5552,15 +5552,15 @@ void ac_behavior( vminsh ){
         uint64_t t_i =  ((uint32_t)t_1 <<  k) +  (uint16_t)t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X}, ", 
                       (unsigned short) a_i_1, 
                       (unsigned short) a_i_0); 
-        printf("b_0 = {%X,%X}, ", 
+        dbg_printf("b_0 = {%X,%X}, ", 
                       (unsigned short) b_i_1, 
                       (unsigned short) b_i_0); 
-        printf("t = {%X,%X}, ", (unsigned short) t_1, 
+        dbg_printf("t = {%X,%X}, ", (unsigned short) t_1, 
                                       (unsigned short) t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5617,12 +5617,12 @@ void ac_behavior( vminub ){
                      + ((uint16_t)t_1 <<   k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = {%X,%X,%X,%X}, ", 
+        dbg_printf("a_0 = {%X,%X,%X,%X}, ", 
                      a_i_3, a_i_2, a_i_1, a_i_0); 
-        printf("b_0 = {%X,%X,%X,%X}, ",
+        dbg_printf("b_0 = {%X,%X,%X,%X}, ",
                      b_i_3, b_i_2, b_i_1, b_i_0); 
-        printf("t = {%X,%X,%X,%X}, ", t_3, t_2, t_1, t_0); 
-        printf("t_i = %X \n\n ", t_i); 
+        dbg_printf("t = {%X,%X,%X,%X}, ", t_3, t_2, t_1, t_0); 
+        dbg_printf("t_i = %X \n\n ", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -5647,13 +5647,13 @@ void ac_behavior( vminuh ){
         uint32_t t_i =  ((uint32_t)t_1 << k) + t_0 ; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("a_0 = %X, ", a_i_0); 
-        printf("a_1 = %X, ", a_i_1); 
-        printf("b_0 = %X, ", b_i_0); 
-        printf("b_1 = %X, ", b_i_1); 
-        printf("t_0 = %X, ", t_0); 
-        printf("t_1 = %X, ", t_1); 
-        printf("t_i = %X \n\n", t_i); 
+        dbg_printf("a_0 = %X, ", a_i_0); 
+        dbg_printf("a_1 = %X, ", a_i_1); 
+        dbg_printf("b_0 = %X, ", b_i_0); 
+        dbg_printf("b_1 = %X, ", b_i_1); 
+        dbg_printf("t_0 = %X, ", t_0); 
+        dbg_printf("t_1 = %X, ", t_1); 
+        dbg_printf("t_i = %X \n\n", t_i); 
     }
     VR.write(vrt, t); 
 }
@@ -6041,7 +6041,7 @@ void ac_behavior( vmhaddshs ){
         t.data[i] = t_i; 
 
         //debugging info: 
-        printf("(%X*%X = %X);(%X*%X = %X)\n",  
+        dbg_printf("(%X*%X = %X);(%X*%X = %X)\n",  
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
                 (unsigned int)t_1, 
@@ -6049,7 +6049,7 @@ void ac_behavior( vmhaddshs ){
                 (unsigned short)b_i_0, 
                 (unsigned int)t_0); 
 
-        printf("(%ld*%ld = %ld);(%ld*%ld = %ld)\n",  
+        dbg_printf("(%ld*%ld = %ld);(%ld*%ld = %ld)\n",  
                 a_i_1,  
                 b_i_1, 
                 t_1, 
@@ -6057,7 +6057,7 @@ void ac_behavior( vmhaddshs ){
                 b_i_0, 
                 t_0); 
 
-        printf("{ t_1l + c_i_1 = t_i_1 (bef. sat.) =  t_i_1 (aft. sat) } =>\n "
+        dbg_printf("{ t_1l + c_i_1 = t_i_1 (bef. sat.) =  t_i_1 (aft. sat) } =>\n "
                "{ %X + %X = %X = %X} => " 
                "{ %ld + %ld = %ld = %ld }\n", 
                (unsigned short)  t_1l, 
@@ -6066,11 +6066,11 @@ void ac_behavior( vmhaddshs ){
                (unsigned int)t_i_1, 
                t_1l, c_i_1, (t_1l + c_i_1) , t_i_1); 
         if( pos_saturated_1 )
-            printf("t_i_1 saturated (positive)\n"); 
+            dbg_printf("t_i_1 saturated (positive)\n"); 
         if( neg_saturated_1 )
-            printf("t_i_1 saturated (negative)\n"); 
+            dbg_printf("t_i_1 saturated (negative)\n"); 
 
-        printf("{ t_0l + c_i_0 = t_i_0 (bef. sat.) =  t_i_0 (aft. sat) } =>\n "
+        dbg_printf("{ t_0l + c_i_0 = t_i_0 (bef. sat.) =  t_i_0 (aft. sat) } =>\n "
                "{ %X + %X = %X = %X } => " 
                "{ %ld + %ld = %ld = %ld }\n", 
                (unsigned short)  t_0l, 
@@ -6079,12 +6079,12 @@ void ac_behavior( vmhaddshs ){
                (unsigned int)t_i_0, 
                t_0l, c_i_0, (t_0l + c_i_0), t_i_0); 
         if( pos_saturated_0 )
-            printf("t_i_1 saturated (positive)\n"); 
+            dbg_printf("t_i_1 saturated (positive)\n"); 
         if( neg_saturated_0 )
-            printf("t_i_1 saturated (negative)\n"); 
+            dbg_printf("t_i_1 saturated (negative)\n"); 
 
-        printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
-        printf("\n"); 
+        dbg_printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
+        dbg_printf("\n"); 
 
     }
     VR.write(vrt, t); 
@@ -6132,7 +6132,7 @@ void ac_behavior( vmhraddshs ){
         t.data[i] = t_i; 
 
         //debugging info: 
-        printf("(%X*%X + 4000 = %X);(%X*%X + 4000 = %X)\n",  
+        dbg_printf("(%X*%X + 4000 = %X);(%X*%X + 4000 = %X)\n",  
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
                 (unsigned int)t_1, 
@@ -6140,7 +6140,7 @@ void ac_behavior( vmhraddshs ){
                 (unsigned short)b_i_0, 
                 (unsigned int)t_0); 
 
-        printf("(%ld*%ld + 16384 = %ld);(%ld*%ld + 16384 = %ld)\n",  
+        dbg_printf("(%ld*%ld + 16384 = %ld);(%ld*%ld + 16384 = %ld)\n",  
                 a_i_1,  
                 b_i_1, 
                 t_1, 
@@ -6148,7 +6148,7 @@ void ac_behavior( vmhraddshs ){
                 b_i_0, 
                 t_0); 
 
-        printf("{ t_1l + c_i_1 = t_i_1 (bef. sat.) =  t_i_1 (aft. sat) } =>\n "
+        dbg_printf("{ t_1l + c_i_1 = t_i_1 (bef. sat.) =  t_i_1 (aft. sat) } =>\n "
                "{ %X + %X = %X = %X} => " 
                "{ %ld + %ld = %ld = %ld }\n", 
                (unsigned short)  t_1l, 
@@ -6157,11 +6157,11 @@ void ac_behavior( vmhraddshs ){
                (unsigned int)t_i_1, 
                t_1l, c_i_1, (t_1l + c_i_1) , t_i_1); 
         if( pos_saturated_1 )
-            printf("t_i_1 saturated (positive)\n"); 
+            dbg_printf("t_i_1 saturated (positive)\n"); 
         if( neg_saturated_1 )
-            printf("t_i_1 saturated (negative)\n"); 
+            dbg_printf("t_i_1 saturated (negative)\n"); 
 
-        printf("{ t_0l + c_i_0 = t_i_0 (bef. sat.) =  t_i_0 (aft. sat) } =>\n "
+        dbg_printf("{ t_0l + c_i_0 = t_i_0 (bef. sat.) =  t_i_0 (aft. sat) } =>\n "
                "{ %X + %X = %X = %X } => " 
                "{ %ld + %ld = %ld = %ld }\n", 
                (unsigned short)  t_0l, 
@@ -6170,12 +6170,12 @@ void ac_behavior( vmhraddshs ){
                (unsigned int)t_i_0, 
                t_0l, c_i_0, (t_0l + c_i_0), t_i_0); 
         if( pos_saturated_0 )
-            printf("t_i_1 saturated (positive)\n"); 
+            dbg_printf("t_i_1 saturated (positive)\n"); 
         if( neg_saturated_0 )
-            printf("t_i_1 saturated (negative)\n"); 
+            dbg_printf("t_i_1 saturated (negative)\n"); 
 
-        printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
-        printf("\n"); 
+        dbg_printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
+        dbg_printf("\n"); 
 
     }
     VR.write(vrt, t); 
@@ -6212,7 +6212,7 @@ void ac_behavior( vmladduhm ){
         uint32_t t_i = (t_i_1 << 16) + (uint16_t)t_i_0; 
         t.data[i] = t_i; 
         //debugging info: 
-        printf("(%X*%X = %X);(%X*%X = %X)\n",  
+        dbg_printf("(%X*%X = %X);(%X*%X = %X)\n",  
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
                 (unsigned int)t_1, 
@@ -6220,7 +6220,7 @@ void ac_behavior( vmladduhm ){
                 (unsigned short)b_i_0, 
                 (unsigned int)t_0); 
 
-        printf("(%lu*%lu = %lu);(%lu*%lu = %lu)\n",  
+        dbg_printf("(%lu*%lu = %lu);(%lu*%lu = %lu)\n",  
                 a_i_1,  
                 b_i_1, 
                 t_1, 
@@ -6228,7 +6228,7 @@ void ac_behavior( vmladduhm ){
                 b_i_0, 
                 t_0); 
 
-        printf("{ t_1l + c_i_1 = t_i_1 } => "
+        dbg_printf("{ t_1l + c_i_1 = t_i_1 } => "
                "{ %X + %X = %X } => " 
                "{ %lu + %lu = %lu }\n", 
                (unsigned short)  t_1l, 
@@ -6236,7 +6236,7 @@ void ac_behavior( vmladduhm ){
                (unsigned int)t_i_1, 
                t_1l, c_i_1, t_i_1); 
 
-        printf("{ t_0l + c_i_0 = t_i_0 } => "
+        dbg_printf("{ t_0l + c_i_0 = t_i_0 } => "
                "{ %X + %X = %X } => " 
                "{ %lu + %lu = %lu }\n", 
                (unsigned short)  t_0l, 
@@ -6244,8 +6244,8 @@ void ac_behavior( vmladduhm ){
                (unsigned int)t_i_0, 
                t_0l, c_i_0, t_i_0); 
 
-        printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
-        printf("\n"); 
+        dbg_printf("t_i = %X = %lu\n", (unsigned long)t_i, t_i); 
+        dbg_printf("\n"); 
     }
     VR.write(vrt, t); 
 
@@ -6280,7 +6280,7 @@ void ac_behavior( vmsumubm ){
         uint32_t t_i  =  t_0 + t_1 + t_2 + t_3 + c_i; 
         t.data[i]     = (uint32_t)t_i; 
         //debug information:
-        printf("(%X*%X);(%X*%X);(%X*%X);(%X*%X)\n",  
+        dbg_printf("(%X*%X);(%X*%X);(%X*%X);(%X*%X)\n",  
                 (unsigned char)a_i_3,  
                 (unsigned char)b_i_3, 
                 (unsigned char)a_i_2,  
@@ -6290,7 +6290,7 @@ void ac_behavior( vmsumubm ){
                 (unsigned char)a_i_0, 
                 (unsigned char)b_i_0); 
 
-        printf("(%lu*%lu);(%lu*%lu);(%lu*%lu);(%lu*%lu)\n",  
+        dbg_printf("(%lu*%lu);(%lu*%lu);(%lu*%lu);(%lu*%lu)\n",  
                 a_i_3,  
                 b_i_3, 
                 a_i_2,  
@@ -6300,7 +6300,7 @@ void ac_behavior( vmsumubm ){
                 a_i_0, 
                 b_i_0); 
         
-        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+        dbg_printf(" t_3 + t_2 + t_1 + t_0 + ci ="
                 " %X +  %X +  %X +  %X + %X ="
                 "t_i  = %X \n",  
                 (unsigned short)t_3, 
@@ -6310,7 +6310,7 @@ void ac_behavior( vmsumubm ){
                 (unsigned int)  c_i, 
                 (unsigned int)  t_i); 
 
-        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+        dbg_printf(" t_3 + t_2 + t_1 + t_0 + ci ="
                 " %lu +  %lu +  %lu + %lu + %lu ="
                 "t_i  = %lu \n",  
                 (short)t_3, 
@@ -6319,7 +6319,7 @@ void ac_behavior( vmsumubm ){
                 (short)t_0, 
                 (int)  c_i, 
                 (int)  t_i); 
-        printf("\n"); 
+        dbg_printf("\n"); 
     }
     VR.write(vrt, t); 
 }
@@ -6353,7 +6353,7 @@ void ac_behavior( vmsummbm ){
         int32_t t_i   =  t_0 + t_1 + t_2 + t_3 + c_i; 
         t.data[i]     = (uint32_t)t_i; 
         //debug information:
-        printf("(%X*%X);(%X*%X);(%X*%X);(%X*%X)\n",  
+        dbg_printf("(%X*%X);(%X*%X);(%X*%X);(%X*%X)\n",  
                 (unsigned char)a_i_3,  
                 (unsigned char)b_i_3, 
                 (unsigned char)a_i_2,  
@@ -6363,7 +6363,7 @@ void ac_behavior( vmsummbm ){
                 (unsigned char)a_i_0, 
                 (unsigned char)b_i_0); 
 
-        printf("(%ld*%lu);(%ld*%lu);(%ld*%lu);(%ld*%lu)\n",  
+        dbg_printf("(%ld*%lu);(%ld*%lu);(%ld*%lu);(%ld*%lu)\n",  
                 a_i_3,  
                 b_i_3, 
                 a_i_2,  
@@ -6373,7 +6373,7 @@ void ac_behavior( vmsummbm ){
                 a_i_0, 
                 b_i_0); 
         
-        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+        dbg_printf(" t_3 + t_2 + t_1 + t_0 + ci ="
                 " %X +  %X +  %X +  %X + %X ="
                 "t_i  = %X \n",  
                 (unsigned short)t_3, 
@@ -6383,7 +6383,7 @@ void ac_behavior( vmsummbm ){
                 (unsigned int)  c_i, 
                 (unsigned int)  t_i); 
 
-        printf(" t_3 + t_2 + t_1 + t_0 + ci ="
+        dbg_printf(" t_3 + t_2 + t_1 + t_0 + ci ="
                 " %ld +  %ld +  %ld + %ld + %ld ="
                 "t_i  = %ld \n",  
                 (short)t_3, 
@@ -6392,7 +6392,7 @@ void ac_behavior( vmsummbm ){
                 (short)t_0, 
                 (int)  c_i, 
                 (int)  t_i); 
-        printf("\n"); 
+        dbg_printf("\n"); 
     }
     VR.write(vrt, t); 
 }
@@ -6427,7 +6427,7 @@ void ac_behavior( vmsumshm ){
         bool neg_saturated = false; 
         if ( t_i_i >= 0){
             if(t_i_i < 0) 
-                printf("* ERROR! WRONG! pos and neg!\n"); 
+                dbg_printf("* ERROR! WRONG! pos and neg!\n"); 
             // 0x7fff_ffff  == 2^31 - 1 
             pos_saturated = (t_i_i >  0x7fffffff); 
         }
@@ -6443,21 +6443,20 @@ void ac_behavior( vmsumshm ){
         t.data[i] = t_i; 
 
         //debug information: 
-        printf("(%X*%X);(%X*%X)\n",  
+        dbg_printf("(%X*%X);(%X*%X)\n",  
                 (unsigned int)a_i_1s,  
                 (unsigned int)b_i_1s, 
                 (unsigned int)a_i_0s, 
                 (unsigned int)b_i_0s); 
 
         if(saturated){
-            if(pos_saturated) printf("pos "); 
-            if(neg_saturated) printf("neg "); 
-            printf("saturated (so it must be moduled).\n"); 
-            if(pos_saturated && neg_saturated) printf("ERROR! WRONG! pos and neg!\n"); 
-        }else  printf("not saturated.\n");
-        //don't know how to print 64bit hexas... 
-       printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X; %X}.\n\n", 
-       //printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %lu}.\n\n", 
+            if(pos_saturated) dbg_printf("pos "); 
+            if(neg_saturated) dbg_printf("neg "); 
+            dbg_printf("saturated (so it must be moduled).\n"); 
+            if(pos_saturated && neg_saturated) dbg_printf("ERROR! WRONG! pos and neg!\n"); 
+        }else  dbg_printf("not saturated.\n");
+       dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X; %X}.\n\n", 
+       //dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%ld + %ld + %ld = %ld; %lu}.\n\n", 
                (signed int)t_h, 
                (signed int)t_l, 
                (signed int)c_i, 
@@ -6496,10 +6495,10 @@ void ac_behavior( vmsumshs ){
         int64_t t_i_i = ((int64_t)t_l) + ((int64_t)t_h) + ((int64_t)c_i); 
         bool pos_saturated = false; 
         bool neg_saturated = false; 
-        printf("t_i_i = %ld.\n" , t_i_i); 
+        dbg_printf("t_i_i = %ld.\n" , t_i_i); 
         if ( t_i_i >= 0){
             if(t_i_i < 0) 
-                printf("* ERROR! WRONG! pos and neg!\n"); 
+                dbg_printf("* ERROR! WRONG! pos and neg!\n"); 
             // 0x7fff_ffff  == 2^31 - 1 
             pos_saturated = (t_i_i >  0x7fffffff); 
         }
@@ -6518,7 +6517,7 @@ void ac_behavior( vmsumshs ){
         }
         //debug information: 
 
-        printf("(%X*%X);(%X*%X)\n",  
+        dbg_printf("(%X*%X);(%X*%X)\n",  
                 /*
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
@@ -6530,14 +6529,14 @@ void ac_behavior( vmsumshs ){
                 (unsigned int)a_i_0s, 
                 (unsigned int)b_i_0s); 
         if(saturated){
-            if(pos_saturated) printf("pos "); 
-            if(neg_saturated) printf("neg "); 
-            printf("saturated.\n"); 
-            if(pos_saturated && neg_saturated) printf("ERROR! WRONG! pos and neg!\n"); 
-        }else  printf("not saturated.\n");
+            if(pos_saturated) dbg_printf("pos "); 
+            if(neg_saturated) dbg_printf("neg "); 
+            dbg_printf("saturated.\n"); 
+            if(pos_saturated && neg_saturated) dbg_printf("ERROR! WRONG! pos and neg!\n"); 
+        }else  dbg_printf("not saturated.\n");
         if(t_i_i)
         //don't know how to print 64bit hexas... 
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
+        dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
                 /*
                 (unsigned int)t_h, 
                 (unsigned int)t_l, 
@@ -6551,7 +6550,7 @@ void ac_behavior( vmsumshs ){
                 (long)t_i_i - 1, 
                 (int)t_i); 
         else
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
+        dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
                 /*
                 (unsigned int)t_h, 
                 (unsigned int)t_l, 
@@ -6589,12 +6588,12 @@ void ac_behavior( vmsumuhm ){
         int32_t t_i = t_l + t_h + c_i; 
         t.data[i] = t_i; 
         //dbg_printf: 
-        printf("(%X*%X),(%X*%X)\n",  
+        dbg_printf("(%X*%X),(%X*%X)\n",  
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
                 (unsigned short)a_i_0, 
                 (unsigned short)b_i_0); 
-        printf("t_h + t_l + c_i = t_i => {%X + %X + %X = %X} \n\n", 
+        dbg_printf("t_h + t_l + c_i = t_i => {%X + %X + %X = %X} \n\n", 
                 (unsigned int)t_h, 
                 (unsigned int)t_l, 
                 (unsigned int)c_i, 
