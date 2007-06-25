@@ -1,3 +1,5 @@
+#include "test.h"
+
 int main() {
 
 	/*vra.data[0] e vrb.data[0]*/
@@ -55,6 +57,16 @@ int main() {
 
 	asm("vmsummbm 1, 2, 3, 4; ");
 
+        uint32_t i, j, k, l;
+        uint32_t m, n, o, p;
+        STORE_VECTOR_U(1, l, k, j, i);
 
-	return 0;
+        m = 0xfffffff9; 
+        n = 0xffffffff; 
+        o = 0xfffefefe; 
+        p = 0xfffeff80;  
+
+        return !(i == m && j == n && k == o && l == p);
+
+
 }
