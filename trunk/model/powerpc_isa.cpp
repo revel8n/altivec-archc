@@ -3618,7 +3618,32 @@ void ac_behavior( vpkuwus ){}
 
 //!Instruction vmrghb behavior method.
 // Vector Merge High Byte - powerisa spec pag 149. 
-void ac_behavior( vmrghb ){}
+void ac_behavior( vmrghb ){
+
+    dbg_printf(" vmrghb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+
+    vec t;
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for (int i=0; i < 4; i++){
+        t.data[i] = 0; 
+    }
+    for(int i = 0; i < 2; i++){
+        t.data[2*i]   =  (a.data[i] & 0xff000000) + ((b.data[i] >> 8) & 0x00ff0000) 
+            + ((a.data[i] >> 8) & 0x0000ff00) + ((b.data[i] >> 16) & 0x000000ff); 
+        t.data[2*i+1]   =  ((a.data[i] << 16) & 0xff000000) + 
+              ((b.data[i] << 8) & 0x00ff0000) 
+            + ((a.data[i] << 8) & 0x0000ff00) + 
+              ((b.data[i]) & 0x000000ff); 
+    }
+    for (int i=0; i < 4; i++){
+        printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
+    }
+
+    VR.write(vrt, t); 
+}
+
 
 //!Instruction vmrghw behavior method.
 // Vector Merge High Word - powerisa spec pag 149. 
@@ -3703,7 +3728,7 @@ void ac_behavior( vmrglh ){
         t.data[2*i+1] =  (a.data[i+2] << 16       ) +  ( b.data[i+2] & 0x0000ffff); 
     }
     for (int i=0; i < 4; i++){
-        printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
+        dbg_printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
     }
 
     VR.write(vrt, t); 
