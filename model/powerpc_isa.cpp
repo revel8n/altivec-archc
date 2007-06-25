@@ -6633,24 +6633,24 @@ void ac_behavior( vmsumuhs ){
         }
         //dbg_printf: 
         
-        printf("(%X*%X),(%X*%X)\n",  
+        dbg_printf("(%X*%X),(%X*%X)\n",  
                 (unsigned short)a_i_1,  
                 (unsigned short)b_i_1, 
                 (unsigned short)a_i_0, 
                 (unsigned short)b_i_0); 
         if(saturated){
-            printf("saturated.\n"); 
+            dbg_printf("saturated.\n"); 
         }
         if(t_i_i)
         //don't know how to print 64bit hexas... 
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
+        dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = %X + 1; %X}.\n\n", 
                 (unsigned int)t_h, 
                 (unsigned int)t_l, 
                 (unsigned int)c_i, 
                 (unsigned long)t_i_i - 1, 
                 (unsigned int)t_i); 
         else
-        printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
+        dbg_printf("t_h + t_l + c_i = t_i_i; t_i => {%X + %X + %X = zero; %X}.\n\n", 
                 (unsigned int)t_h, 
                 (unsigned int)t_l, 
                 (unsigned int)c_i, 
