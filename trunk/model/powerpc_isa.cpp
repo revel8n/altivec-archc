@@ -3944,7 +3944,10 @@ void ac_behavior( vsro ){
     vec t(0);
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
-    uint8_t c[15]; 
+    //FIXME: really I need just c[15]. But I'm having stranges
+    //segfaults. 
+    //uint8_t c[15]; 
+    uint8_t c[15000]; 
     // 0xf0: bit 121 ->  1111_0000 <- bit 128
     uint8_t shb =  (b.data[3] & 0xf0) >> 4; 
     printf("b[3] = 0x%x,  shb = 0x%x = %d\n", (int)b.data[3], (char)shb, shb); 
@@ -3974,22 +3977,18 @@ void ac_behavior( vsro ){
         printf("%2x,", (unsigned char)c[i] ); 
     }
     printf("\n"); 
+
     for (int i = 0; i < 16 ; i  = i + 4){
-        t.data[i] = (c[i + 0]  << 24) + (c[i + 1]<<16) + 
+        t.data[i/4] = (c[i + 0]  << 24) + (c[i + 1]<<16) + 
             (c[i + 2]<< 8)  + c[i + 3]; 
-        printf("t_i= 0x%8x\n", (int)t.data[i] ); 
+        printf("t_i= 0x%8x\n", (int)t.data[i/4] ); 
     }
+    VR.write(vrt, t);
     /*
-    uint32_t a_0 = a.data[0];
-    uint32_t a_1 = a.data[1];
-    uint32_t a_2 = a.data[2];
-    uint32_t a_3 = a.data[3];
-    uint64_t  r = (a_1 << 32) + a_0 ; 
     */
 
 
 
-    VR.write(vrt, t);
     //printf("r = %016lX\n", r); 
 
 }
