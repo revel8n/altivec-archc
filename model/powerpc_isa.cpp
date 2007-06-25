@@ -3944,24 +3944,53 @@ void ac_behavior( vsro ){
     vec t(0);
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
+    uint8_t c[15]; 
     // 0xf0: bit 121 ->  1111_0000 <- bit 128
     uint8_t shb =  (b.data[3] & 0xf0) >> 4; 
     printf("b[3] = 0x%x,  shb = 0x%x = %d\n", (int)b.data[3], (char)shb, shb); 
+    for (int i = 0; i < 16 ; i  = i + 4){
+        c[i + 0] =  a.data[i/4] >> 24; 
+        c[i + 1] =  a.data[i/4] >> 16; 
+        c[i + 2] =  a.data[i/4] >> 8; 
+        c[i + 3] =  a.data[i/4]; 
+        printf( "c[%d] = 0x%2x, " 
+                "c[%d] = 0x%2x, " 
+                "c[%d] = 0x%2x, " 
+                "c[%d] = 0x%2x\n", 
+                i + 0, (unsigned char)c[i + 0], 
+                i + 1, (unsigned char)c[i + 1], 
+                i + 2, (unsigned char)c[i + 2], 
+                i + 3, (unsigned char)c[i + 3]
+                ); 
+    }
+    for (int i = 15; i >= 0 ; i--){
+        if (i < shb)
+            c[i] = 0; 
+        else
+            c[i] =  c[i - shb]; 
+    }
+    printf("c = "); 
+    for (int i = 0; i < 16; i++){
+        printf("%2x,", (unsigned char)c[i] ); 
+    }
+    printf("\n"); 
+    for (int i = 0; i < 16 ; i  = i + 4){
+        t.data[i] = (c[i + 0]  << 24) + (c[i + 1]<<16) + 
+            (c[i + 2]<< 8)  + c[i + 3]; 
+        printf("t_i= 0x%8x\n", (int)t.data[i] ); 
+    }
+    /*
+    uint32_t a_0 = a.data[0];
+    uint32_t a_1 = a.data[1];
+    uint32_t a_2 = a.data[2];
+    uint32_t a_3 = a.data[3];
+    uint64_t  r = (a_1 << 32) + a_0 ; 
+    */
 
-    uint64_t  r = ((uint64_t)a.data[1] << 32) + (uint64_t)a.data[0] ; 
-    uint64_t  s = ((uint64_t)a.data[3] << 32) + (uint64_t)a.data[2] ; 
-    //it seems impossible to printf 64bit hexa, so I need these: 
-    uint32_t  t_0 = (uint32_t)  r >> 32; 
-    uint32_t  t_1 = (uint32_t)  r; 
-    uint32_t  t_2 = (uint32_t)  s >> 32; 
-    uint32_t  t_3 = (uint32_t)  s; 
-    printf("r = 0x%x_%x,  s = 0x%x_%x\n", (int)t_0, (int)t_1, 
-            (int)t_2, (int)t_3); 
-             
-    printf("t_0 = 0x%x\n", (int)t_0); 
-    r = r >> -8; 
-    printf("t_0 >> -8 = 0x%x\n", (int)t_0); 
 
+
+    VR.write(vrt, t);
+    //printf("r = %016lX\n", r); 
 
 }
 
