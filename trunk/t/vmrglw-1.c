@@ -10,7 +10,6 @@ int main() {
 
 	STORE_VECTOR_U(14, a, b, c, d);
 
-	return 0; 
 	return !(a == 0x00a00030 && b == 0xa00ab00b &&  
 		 c == 0x0f1111e0 && d == 0xc00cd00d);
 }

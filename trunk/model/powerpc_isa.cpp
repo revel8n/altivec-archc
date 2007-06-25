@@ -3622,7 +3622,21 @@ void ac_behavior( vmrghb ){}
 
 //!Instruction vmrghw behavior method.
 // Vector Merge High Word - powerisa spec pag 149. 
-void ac_behavior( vmrghw ){}
+void ac_behavior( vmrghw ){
+
+    dbg_printf(" vmrghw v%d, v%d, %d\n\n", vrt, vrb, uim4);
+
+    vec t;
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for(int i = 0; i < 2; i++){
+        t.data[2*i] = t.data[i+2]; 
+        t.data[2*i+1] = t.data[i+2]; 
+    }
+
+    VR.write(vrt, t); 
+}
 
 //!Instruction vmrghh behavior method.
 // Vector Merge High Halfword - powerisa spec pag 149. 
@@ -3636,15 +3650,18 @@ void ac_behavior( vmrglb ){}
 // Vector Merge Low Word - powerisa spec pag 150. 
 void ac_behavior( vmrglw ){
     
-    dbg_printf(" vspltb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrglw v%d, v%d, %d\n\n", vrt, vrb, uim4);
 
     vec t;
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
 
     for(int i = 0; i < 2; i++){
-        t.data[2*i] = t.data[i+2]; 
-        t.data[2*i+1] = t.data[i+2]; 
+        t.data[2*i] = a.data[i+2]; 
+        t.data[2*i+1] = b.data[i+2]; 
+    }
+    for (int i=0; i < 4; i++){
+        printf("t[%d] = 0x%x\n", i, t.data[i]); 
     }
 
     VR.write(vrt, t); 
