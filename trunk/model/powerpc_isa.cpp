@@ -3617,27 +3617,41 @@ void ac_behavior( vpkuhus ){}
 void ac_behavior( vpkuwus ){}
 
 //!Instruction vmrghb behavior method.
-// Reservado por Ribamar
+// Vector Merge High Byte - powerisa spec pag 149. 
 void ac_behavior( vmrghb ){}
 
 //!Instruction vmrghw behavior method.
-// Reservado por Ribamar
+// Vector Merge High Word - powerisa spec pag 149. 
 void ac_behavior( vmrghw ){}
 
 //!Instruction vmrghh behavior method.
-// Reservado por Ribamar
+// Vector Merge High Halfword - powerisa spec pag 149. 
 void ac_behavior( vmrghh ){}
 
 //!Instruction vmrglb behavior method.
-// Reservado por Ribamar
+// Vector Merge Low Byte - powerisa spec pag 150. 
 void ac_behavior( vmrglb ){}
 
 //!Instruction vmrglw behavior method.
-// Reservado por Ribamar
-void ac_behavior( vmrglw ){}
+// Vector Merge Low Word - powerisa spec pag 150. 
+void ac_behavior( vmrglw ){
+    
+    dbg_printf(" vspltb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+
+    vec t;
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for(int i = 0; i < 2; i++){
+        t.data[2*i] = t.data[i+2]; 
+        t.data[2*i+1] = t.data[i+2]; 
+    }
+
+    VR.write(vrt, t); 
+}
 
 //!Instruction vmrglh behavior method.
-// Reservado por Ribamar
+// Vector Merge Low Halfword - powerisa spec pag 150. 
 void ac_behavior( vmrglh ){}
 
 //!Instruction vupkhpx behavior method.
@@ -3942,24 +3956,20 @@ void ac_behavior( vsr ){
 // Vector Shift Right by Octet - powerisa spec pag 154. 
 void ac_behavior( vsro ){
     dbg_printf(" vsro v%d, v%d, v%d\n\n", vrt, vra, vrb);
-    printf(" vsro vrt = v%d, vra = v%d, vrb =v%d\n\n", vrt, vra, vrb);
 
     vec t(0);
     vec a = VR.read(vra);
     vec b = VR.read(vrb);
-    //FIXME: really I need just c[15]. But I'm having stranges
-    //segfaults. 
-    //uint8_t c[15]; 
-    uint8_t c[15000]; 
+    uint8_t c[16]; 
     // 0xf0: bit 121 ->  1111_0000 <- bit 128
     uint8_t shb =  (b.data[3] & 0xf0) >> 4; 
-    printf("b[3] = 0x%x,  shb = 0x%x = %d\n", (int)b.data[3], (char)shb, shb); 
+    dbg_printf("b[3] = 0x%x,  shb = 0x%x = %d\n", (int)b.data[3], (char)shb, shb); 
     for (int i = 0; i < 16 ; i  = i + 4){
         c[i + 0] =  a.data[i/4] >> 24; 
         c[i + 1] =  a.data[i/4] >> 16; 
         c[i + 2] =  a.data[i/4] >> 8; 
         c[i + 3] =  a.data[i/4]; 
-        printf( "c[%d] = 0x%2x, " 
+        dbg_printf( "c[%d] = 0x%2x, " 
                 "c[%d] = 0x%2x, " 
                 "c[%d] = 0x%2x, " 
                 "c[%d] = 0x%2x\n", 
@@ -3975,24 +3985,20 @@ void ac_behavior( vsro ){
         else
             c[i] =  c[i - shb]; 
     }
-    printf("c = "); 
+    dbg_printf("c = "); 
     for (int i = 0; i < 16; i++){
-        printf("%2x,", (unsigned char)c[i] ); 
+        dbg_printf("%2x,", (unsigned char)c[i] ); 
     }
-    printf("\n"); 
+    dbg_printf("\n"); 
 
     for (int i = 0; i < 16 ; i  = i + 4){
         t.data[i/4] = (c[i + 0]  << 24) + (c[i + 1]<<16) + 
             (c[i + 2]<< 8)  + c[i + 3]; 
-        printf("t_i= 0x%8x\n", (int)t.data[i/4] ); 
+        dbg_printf("t_i= 0x%8x\n", (int)t.data[i/4] ); 
     }
     VR.write(vrt, t);
-    /*
-    */
 
-
-
-    //printf("r = %016lX\n", r); 
+    //dgb_printf("r = %016lX\n", r); 
 
 }
 
