@@ -22,8 +22,6 @@ int main() {
         return 1;
     }
 
-    return 0;
-
     MARK_NOT_SAT();
 	
     LOAD_VECTOR_U(13, 0x7FFFFFFF, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF);
