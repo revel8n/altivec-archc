@@ -3655,7 +3655,7 @@ void ac_behavior( vmrghh ){
         t.data[2*i+1] =  (a.data[i] << 16       ) +  ( b.data[i] & 0x0000ffff); 
     }
     for (int i=0; i < 4; i++){
-        printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
+        dbg_printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
     }
 
     VR.write(vrt, t); 
@@ -3690,7 +3690,24 @@ void ac_behavior( vmrglw ){
 
 //!Instruction vmrglh behavior method.
 // Vector Merge Low Halfword - powerisa spec pag 150. 
-void ac_behavior( vmrglh ){}
+void ac_behavior( vmrglh ){
+
+    dbg_printf(" vmrglh v%d, v%d, %d\n\n", vrt, vrb, uim4);
+
+    vec t;
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    for(int i = 0; i < 2; i++){
+        t.data[2*i]   =  (a.data[i+2] & 0xffff0000) +  ( b.data[i+2] >> 16       ); 
+        t.data[2*i+1] =  (a.data[i+2] << 16       ) +  ( b.data[i+2] & 0x0000ffff); 
+    }
+    for (int i=0; i < 4; i++){
+        printf("t[%d] = 0x%8x\n", i, (int)t.data[i]); 
+    }
+
+    VR.write(vrt, t); 
+}
 
 //!Instruction vupkhpx behavior method.
 void ac_behavior( vupkhpx ){}
