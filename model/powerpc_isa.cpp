@@ -4816,7 +4816,51 @@ void ac_behavior( vsum2sws )
 }
 
 //!Instruction vsum4sbs behavior method.
-void ac_behavior( vsum4sbs ){}
+void ac_behavior( vsum4sbs )
+{
+    dbg_printf(" vsum4sbs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int8_t ba;
+    int32_t bb;
+    int64_t sum = 0;
+    uint32_t raw;
+
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        // Add word from VRB
+        bb = (int32_t) b.data[i];
+        sum = (int64_t) bb;
+
+        // Add each byte from VRA
+        for (j = 0; j < 4; j++) {
+            ba = (int8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            sum += (int64_t) ba;
+        }
+
+        // CLAMP
+        if ((sum < 0) && (abs(sum) > 0x080000000)) {
+            dbg_printf("abs(sum) = %#016lX\n", abs(sum));
+            raw = 0x80000000;
+            saturated++;
+        } else if (sum > 0x7FFFFFFF) {
+            raw = 0x7FFFFFFF;
+            saturated++;
+        } else {
+            raw = (uint32_t) sum;
+        }
+
+        t.data[i] = raw;
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vsum4shs behavior method.
 void ac_behavior( vsum4shs ){}
