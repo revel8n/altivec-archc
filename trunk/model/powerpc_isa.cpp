@@ -3631,8 +3631,11 @@ void ac_behavior( vmrghw ){
     vec b = VR.read(vrb);
 
     for(int i = 0; i < 2; i++){
-        t.data[2*i] = t.data[i+2]; 
-        t.data[2*i+1] = t.data[i+2]; 
+        t.data[2*i] = a.data[i]; 
+        t.data[2*i+1] = b.data[i]; 
+    }
+    for (int i=0; i < 4; i++){
+        printf("t[%d] = 0x%x\n", i, t.data[i]); 
     }
 
     VR.write(vrt, t); 
@@ -3661,7 +3664,7 @@ void ac_behavior( vmrglw ){
         t.data[2*i+1] = b.data[i+2]; 
     }
     for (int i=0; i < 4; i++){
-        printf("t[%d] = 0x%x\n", i, t.data[i]); 
+        dbg_printf("t[%d] = 0x%x\n", i, t.data[i]); 
     }
 
     VR.write(vrt, t); 
