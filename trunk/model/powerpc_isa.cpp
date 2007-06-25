@@ -4866,7 +4866,47 @@ void ac_behavior( vsum4sbs )
 void ac_behavior( vsum4shs ){}
 
 //!Instruction vsum4ubs behavior method.
-void ac_behavior( vsum4ubs ){}
+void ac_behavior( vsum4ubs )
+{
+    dbg_printf(" vsum4ubs v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    uint8_t ba;
+    uint32_t bb;
+    uint64_t sum = 0;
+    uint32_t raw;
+
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        // Add word from VRB
+        bb = (uint32_t) b.data[i];
+        sum = (uint64_t) bb;
+
+        // Add each byte from VRA
+        for (j = 0; j < 4; j++) {
+            ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            sum += (uint64_t) ba;
+        }
+
+        // CLAMP
+        if (sum > 0xFFFFFFFF) {
+            raw = 0xFFFFFFFF;
+            saturated++;
+        } else {
+            raw = (uint32_t) sum;
+        }
+
+        t.data[i] = raw;
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 // ****** Integer Maximum Instructions. 
 
