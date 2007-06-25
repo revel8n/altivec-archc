@@ -316,3 +316,51 @@ typedef unsigned int		uint32_t;
     asm("mtvscr 30"); \
 }
 
+#define DIE_IF_ALL_TRUE() { \
+    int it_branched; \
+    asm("bc 12, 24, 12 \n" \
+        "li %0, 0 \n" \
+        "b 8 \n" \
+        "li %0, 1 \n" \
+        : "=r" (it_branched) : : "0"); \
+    if (it_branched) { \
+        return 1; \
+    } \
+}
+
+#define DIE_IF_NOT_ALL_TRUE() { \
+    int it_branched; \
+    asm("bc 12, 24, 12 \n" \
+        "li %0, 0 \n" \
+        "b 8 \n" \
+        "li %0, 1 \n" \
+        : "=r" (it_branched) : : "0"); \
+    if (!it_branched) { \
+        return 1; \
+    } \
+}
+
+#define DIE_IF_ALL_FALSE() { \
+    int it_branched; \
+    asm("bc 12, 26, 12 \n" \
+        "li %0, 0 \n" \
+        "b 8 \n" \
+        "li %0, 1 \n" \
+        : "=r" (it_branched) : : "0"); \
+    if (it_branched) { \
+        return 1; \
+    } \
+}
+
+#define DIE_IF_NOT_ALL_FALSE() { \
+    int it_branched; \
+    asm("bc 12, 26, 12 \n" \
+        "li %0, 0 \n" \
+        "b 8 \n" \
+        "li %0, 1 \n" \
+        : "=r" (it_branched) : : "0"); \
+    if (!it_branched) { \
+        return 1; \
+    } \
+}
+

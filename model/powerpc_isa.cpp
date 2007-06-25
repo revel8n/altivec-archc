@@ -3345,9 +3345,12 @@ void ac_behavior( AV_VC ){}
 // CR6), update CR properly. (TODO: May need changes for float point)
 inline void CR6_update(ac_reg<ac_word> &CR, uint8_t t, uint8_t f) {
     uint32_t cr6_mask = 0xFFFFFF0F; /* start with CR6 clean */
-    uint32_t new_cr6 = (((uint32_t) t << 3) & ((uint32_t) f << 1)) << 4;
+    uint32_t new_cr6 = (((uint32_t) (t << 3)) | ((uint32_t) (f << 1))) << 4;
 
+    dbg_printf("CR6 update (t=%d,f=%d,new_cr6=%#08X):\n", t, f, new_cr6);
+    dbg_printf("CR (before) = %#08X\n", CR.read());
     CR.write((CR.read() & cr6_mask) | new_cr6);
+    dbg_printf("CR (after)  = %#08X\n", CR.read());
 }
 
 // Set SATuration bit in VSCR
