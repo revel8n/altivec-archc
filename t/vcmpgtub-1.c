@@ -1,7 +1,5 @@
 #include "test.h"
 
-// Check if unsigned byte-wise gt works
-
 int main() {
 	uint32_t a, b, c, d;
 
