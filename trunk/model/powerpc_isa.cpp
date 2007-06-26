@@ -6976,23 +6976,145 @@ void ac_behavior( vcmpequw_ )
     vcmpequw_impl(CR, VR, 1, vrt, vra, vrb);
 }
 
+void inline vcmpgtsb_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i, j;
+    int8_t ba, bb, bt;
+    uint32_t bt32;
+    int remaining_gt = 16;
+    int remaining_le = 16;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            ba = (int8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (int8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+         
+            bt = (ba > bb);
+
+            if (bt) {
+                remaining_gt--;
+            } else {
+                remaining_le--;
+            }
+
+            bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
+            t.data[i] |= bt32;
+        }
+    }
+
+    VR.write(vrt, t);
+    
+    if (update_cr6) CR6_update(CR, !remaining_gt, !remaining_le);
+}
+
 //!Instruction vcmpgtsb behavior method.
-void ac_behavior( vcmpgtsb ){}
-
-//!Instruction vcmpgtsh behavior method.
-void ac_behavior( vcmpgtsh ){}
-
-//!Instruction vcmpgtsw behavior method.
-void ac_behavior( vcmpgtsw ){}
+void ac_behavior( vcmpgtsb ) {
+    dbg_printf(" vcmpgtsb v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsb_impl(CR, VR, 0, vrt, vra, vrb);
+}
 
 //!Instruction vcmpgtsb_ behavior method.
-void ac_behavior( vcmpgtsb_ ){}
+void ac_behavior( vcmpgtsb_ ) {
+    dbg_printf(" vcmpgtsb. v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsb_impl(CR, VR, 1, vrt, vra, vrb);
+}
+
+void inline vcmpgtsh_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i, j;
+    int16_t ha, hb, ht;
+    uint32_t ht32;
+    int remaining_gt = 8;
+    int remaining_le = 8;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            ha = (int16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (int16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+          
+            ht = (ha > hb);
+
+            if (ht) {
+                remaining_gt--;
+            } else {
+                remaining_le--;
+            }
+
+            ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
+            t.data[i] |= ht32;
+        }
+    }
+
+    VR.write(vrt, t);
+    
+    if (update_cr6) CR6_update(CR, !remaining_gt, !remaining_le);
+}
+
+//!Instruction vcmpgtsh behavior method.
+void ac_behavior( vcmpgtsh ) {
+    dbg_printf(" vcmpgtsh v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsh_impl(CR, VR, 0, vrt, vra, vrb);
+}
 
 //!Instruction vcmpgtsh_ behavior method.
-void ac_behavior( vcmpgtsh_ ){}
+void ac_behavior( vcmpgtsh_ ) {
+    dbg_printf(" vcmpgtsh. v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsh_impl(CR, VR, 1, vrt, vra, vrb);
+}
+
+void inline vcmpgtsw_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
+{
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+    
+    int i;
+    int32_t wa, wb;
+    int32_t greater;
+    int remaining_gt = 4;
+    int remaining_le = 4;
+
+    for (i = 0; i < 4; i++) {
+        wa = (int32_t) a.data[i];
+        wb = (int32_t) b.data[i];
+        greater = (a.data[i] > b.data[i]);
+
+        if (greater) {
+            remaining_gt--;
+        } else {
+            remaining_le--;
+        }
+
+        t.data[i] = greater;
+    }
+    
+    VR.write(vrt, t);
+    if (update_cr6) CR6_update(CR, !remaining_gt, !remaining_le);
+}
+
+//!Instruction vcmpgtsw behavior method.
+void ac_behavior( vcmpgtsw )
+{
+    dbg_printf(" vcmpgtsw v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsw_impl(CR, VR, 0, vrt, vra, vrb);
+}
 
 //!Instruction vcmpgtsw_ behavior method.
-void ac_behavior( vcmpgtsw_ ){}
+void ac_behavior( vcmpgtsw_ )
+{
+    dbg_printf(" vcmpgtsw. v%d, v%d, v%d\n\n", vrt, vra, vrb);
+    vcmpgtsw_impl(CR, VR, 1, vrt, vra, vrb);
+}
+
+
 
 void inline vcmpgtub_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int vrt, int vra, int vrb)
 {
@@ -7029,7 +7151,7 @@ void inline vcmpgtub_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int 
     if (update_cr6) CR6_update(CR, !remaining_gt, !remaining_le);
 }
 
-//!Instruction vcmpgtqub behavior method.
+//!Instruction vcmpgtub behavior method.
 void ac_behavior( vcmpgtub ) {
     dbg_printf(" vcmpgtub v%d, v%d, v%d\n\n", vrt, vra, vrb);
     vcmpgtub_impl(CR, VR, 0, vrt, vra, vrb);
