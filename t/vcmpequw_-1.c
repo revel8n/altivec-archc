@@ -1,7 +1,5 @@
 #include "test.h"
 
-// Check if unsigned word-wise equality works, w/ CR6 flagging
-
 int main() {
 	uint32_t a, b, c, d;
 
@@ -10,8 +8,8 @@ int main() {
 
 	asm("vcmpequw. 15, 13, 14");
 
-    // TODO: test if CR6 was correctly flagged (actually must be 0x00)
-
+    DIE_IF_ALL_TRUE();
+    DIE_IF_ALL_FALSE();
 
 	STORE_VECTOR_U(15, a, b, c, d);
 
@@ -19,8 +17,6 @@ int main() {
 		  c == 0x00000001 && d == 0x00000000)) {
         return 1;
     }
-
-    // TODO: test the two possible flags
 
     return 0;
 }
