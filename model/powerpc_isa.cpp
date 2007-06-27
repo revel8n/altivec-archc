@@ -4735,6 +4735,7 @@ void ac_behavior( vsububs ){
     int i, j;
     uint8_t ba, bb, bt;
     uint32_t bt32;
+    int saturated = 0;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
@@ -4743,9 +4744,10 @@ void ac_behavior( vsububs ){
          
             bt = ba - bb;
 
-            // TODO: Need to mark SAT bit at VSCR
-            // saturate
-            bt = bt > ba ? 0x00 : bt;
+            if (bt > ba) {
+                bt = 0x00;
+                saturated++;
+            }
 
             bt32 = (((uint32_t) bt) & (0x000000FF)) << (8 * j);
             t.data[i] |= bt32;
@@ -4753,6 +4755,7 @@ void ac_behavior( vsububs ){
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vsubuhs behavior method.
@@ -4766,6 +4769,7 @@ void ac_behavior( vsubuhs ){
     int i, j;
     uint16_t ha, hb, ht;
     uint32_t ht32;
+    int saturated = 0;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 2; j++) {
@@ -4774,9 +4778,10 @@ void ac_behavior( vsubuhs ){
           
             ht = ha - hb;
 
-            // TODO: Need to mark SAT bit at VSCR
-            // saturate
-            ht = ht > ha ? 0x0000 : ht;
+            if (ht > ha) {
+                ht = 0x0000;
+                saturated++;
+            }
 
             ht32 = (((uint32_t) ht) & 0x0000FFFF) << (16 * j);
             t.data[i] |= ht32;
@@ -4784,6 +4789,7 @@ void ac_behavior( vsubuhs ){
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vsubuws behavior method.
@@ -4796,14 +4802,21 @@ void ac_behavior( vsubuws ){
 
     uint32_t dif;
     int i;
+    int saturated = 0;
+
     for (i = 0; i < 4; i++) {
         dif = a.data[i] - b.data[i];
-        // TODO: Need to mark SAT bit at VSCR
-        // saturate
-        t.data[i] = dif > a.data[i] ? 0x000000 : dif;
+        
+        if (dif > a.data[i]) {
+            dif = 0x00000000;
+            saturated++;
+        }
+
+        t.data[i] = dif;
     }
 
     VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
 }
 
 //!Instruction vmulesb behavior method.
@@ -6680,9 +6693,8 @@ void ac_behavior( vmsumshs ){
                             (pos_saturated ? 0x7fffffff: 0x80000000) 
                             : t_i_i); 
         t.data[i] = t_i; 
-        if(saturated){
-            //FIXME: undeclared function. 
-            //altivec_mark_saturation(); 
+        if (saturated) {
+            VSCR_SAT(VSCR, 1);
         }
         //debug information: 
 
@@ -6796,9 +6808,8 @@ void ac_behavior( vmsumuhs ){
         bool saturated = (t_i_i > 0xffffffff); 
         uint32_t t_i = (uint32_t)(saturated ? 0xffffffff : t_i_i); 
         t.data[i] = t_i; 
-        if(saturated){
-            //FIXME: undeclared function. 
-            //altivec_mark_saturation(); 
+        if (saturated) {
+            VSCR_SAT(VSCR, 1);
         }
         //dbg_printf: 
         
