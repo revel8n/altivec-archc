@@ -12,14 +12,12 @@ int main() {
 	LOAD_VECTOR_U(14, 0x00000001, 0x00100001, 0x00001234, 0x00000000);
 
 	asm("vaddubs 15, 13, 14");
-    
-    SATURATED(sat);
-    if (!sat) return 1;
+   
+    DIE_IF_NOT_SATURATED();
 
     // Clean SAT bit
     MARK_NOT_SAT();
-    SATURATED(sat);
-    if (sat) return 1;
+    DIE_IF_SATURATED();
 
     return 0;
 }

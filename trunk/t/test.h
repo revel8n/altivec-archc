@@ -304,17 +304,41 @@ typedef unsigned int		uint32_t;
 	d7 = *uv; \
 }
 
+/* SATURATED() is deprecated, please use DIE_IF_SATURATED and
+ * DIE_IF_NOT_SATURATED() */
+
+/*
 #define SATURATED(var) { \
     asm("mfvscr 30"); \
     uint32_t x[4]; \
     STORE_VECTOR_U(30, x[3], x[2], x[1], x[0]); \
     var = x[3] & 0x00000001; \
 }
+*/
 
 #define MARK_NOT_SAT() { \
     LOAD_VECTOR_UWORD(30, 3, 0); \
     asm("mtvscr 30"); \
 }
+
+#define DIE_IF_SATURATED() { \
+    asm("mfvscr 30"); \
+    uint32_t x[4]; \
+    STORE_VECTOR_U(30, x[3], x[2], x[1], x[0]); \
+    if (x[3] & 0x00000001) {\
+        return 1; \
+    } \
+}
+
+#define DIE_IF_NOT_SATURATED() { \
+    asm("mfvscr 30"); \
+    uint32_t x[4]; \
+    STORE_VECTOR_U(30, x[3], x[2], x[1], x[0]); \
+    if (!(x[3] & 0x00000001)) {\
+        return 1; \
+    } \
+}
+
 
 #define DIE_IF_ALL_TRUE() { \
     int it_branched; \

@@ -16,12 +16,7 @@ int main() {
         return 1;
     }
 
-    SATURATED(sat);
-
-    if (!sat) {
-        return 1;
-    }
-
+    DIE_IF_NOT_SATURATED();
     MARK_NOT_SAT();
 	
     LOAD_VECTOR_U(13, 0x7FFFFFF0, 0x80000000, 0x00000000, 0x00000000);
@@ -31,11 +26,7 @@ int main() {
 
 	STORE_VECTOR_U(15, a, b, c, d);
 
-    SATURATED(sat)
-
-    if (sat) {
-        return 1;
-    }
+    DIE_IF_SATURATED();
 
     return 0;
 }
