@@ -4734,7 +4734,32 @@ void ac_behavior( vsubuws ){
 }
 
 //!Instruction vmulesb behavior method.
-void ac_behavior( vmulesb ){}
+void ac_behavior( vmulesb ) {
+    dbg_printf(" vmulesb v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int8_t ba, bb;
+    int32_t mul;
+    uint32_t umul;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j+=2) {
+            ba = (int8_t) (0x000000FF & (a.data[i] >> (8 * j)));
+            bb = (int8_t) (0x000000FF & (b.data[i] >> (8 * j)));
+        
+            mul = ((int32_t) ba) * ((int32_t) bb);
+            umul = (((uint32_t) mul) & (0x0000FFFF)) << (8 * j);
+
+            t.data[i] |= umul;
+        }
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmulesh behavior method.
 void ac_behavior( vmulesh ){}
