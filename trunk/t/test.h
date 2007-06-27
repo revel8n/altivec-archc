@@ -35,6 +35,8 @@ typedef unsigned int		uint32_t;
 	asm("lvx " #vec ", 0, %0" : : "r" (uv)); \
 	}
 
+#define NEW_LOAD_VECTOR_U(vec, x3, x2, x1, x0) LOAD_VECTOR_U(vec, x0, x1, x2, x3)
+
 #define STORE_VECTOR_U(vec, d3, d2, d1, d0) { \
 	uint32_t *uv = (uint32_t *) 0x2000; \
 	asm("stvx " #vec", 0, %0" : : "r" (uv) : "memory"); \
@@ -46,6 +48,8 @@ typedef unsigned int		uint32_t;
 	uv++; \
 	d3 = *uv; \
 	}
+
+#define NEW_STORE_VECTOR_U(vec, x3, x2, x1, x0) STORE_VECTOR_U(vec, x0, x1, x2, x3)
 
 #define LOAD_VECTOR_UBYTE(vec, d15, d14, d13, d12, d11, d10, d9, d8, d7, d6, d5, d4, d3, d2, d1, d0) { \
 	uint8_t *uv = (uint8_t *) 0x1000; \
