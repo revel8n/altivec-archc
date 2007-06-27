@@ -16,12 +16,7 @@ int main() {
         return 1;
     }
 
-    SATURATED(sat);
-
-    if (!sat) {
-        return 1;
-    }
-
+    DIE_IF_NOT_SATURATED();
 
     MARK_NOT_SAT();
 	
@@ -32,11 +27,7 @@ int main() {
 
 	STORE_VECTOR_U(15, a, b, c, d);
 
-    SATURATED(sat)
-
-    if (sat) {
-        return 1;
-    }
+    DIE_IF_SATURATED();
 
     return 0;
 }
