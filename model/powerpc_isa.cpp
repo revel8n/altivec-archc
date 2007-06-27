@@ -3608,7 +3608,46 @@ void ac_behavior( vpkswus ){}
 void ac_behavior( vpkuhum ){}
 
 //!Instruction vpkuwum behavior method.
-void ac_behavior( vpkuwum ){}
+void ac_behavior( vpkuwum )
+{
+    dbg_printf(" vpkuwum v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int word_pos;
+    int half_pos;
+    uint16_t ha, hb;
+    uint32_t wt;
+
+    for (i = 0; i < 4; i++) {
+        // Calculate target positions
+        word_pos = i / 2;
+        half_pos = i % 2;
+       
+        printf("word_pos: %d, half_pos: %d\n", word_pos, half_pos);
+
+        // Get the 16 bits parts from VRA and VRB
+        ha = (uint16_t) (0x0000FFFF & (a.data[i] >> 16));
+        hb = (uint16_t) (0x0000FFFF & (b.data[i] >> 16));
+
+        printf("ha = %#04X, hb = %#04X\n", ha, hb);
+
+        // Write VRA part in VRT
+        wt = (((uint32_t) ha) & 0x0000FFFF) << (16 * half_pos);
+        printf("%#0X\n", wt);
+        t.data[word_pos] |= wt;
+
+        // Write VRB part in VRT
+        wt = (((uint32_t) hb) & 0x0000FFFF) << (16 * half_pos);
+        printf("%#016lX\n", wt);
+        t.data[word_pos + 2] |= wt;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vpkuhus behavior method.
 void ac_behavior( vpkuhus ){}
