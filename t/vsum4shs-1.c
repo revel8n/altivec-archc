@@ -16,11 +16,7 @@ int main() {
         return 1;
     }
 
-    SATURATED(sat);
-
-    if (!sat) {
-        return 1;
-    }
+    DIE_IF_NOT_SATURATED();
 
     MARK_NOT_SAT();
 	
@@ -35,12 +31,8 @@ int main() {
 		 c == 0xFFFFFFFE && d == 0x0)) {
         return 1;
     }
-
-    SATURATED(sat)
-
-    if (sat) {
-        return 1;
-    }
+    
+    DIE_IF_SATURATED();
 
     return 0;
 }
