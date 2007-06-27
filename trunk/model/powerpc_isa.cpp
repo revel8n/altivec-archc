@@ -4762,7 +4762,29 @@ void ac_behavior( vmulesb ) {
 }
 
 //!Instruction vmulesh behavior method.
-void ac_behavior( vmulesh ){}
+void ac_behavior( vmulesh )
+{
+    dbg_printf(" vmulesh v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    int16_t ha, hb;
+    int32_t mul;
+
+    for (i = 0; i < 4; i++) {
+        ha = (int16_t) (0x0000FFFF & a.data[i]);
+        hb = (int16_t) (0x0000FFFF & b.data[i]);
+
+        mul = ((int32_t) ha) * ((int32_t) hb);
+         
+        t.data[i] = (uint32_t) mul;
+    }
+
+    VR.write(vrt, t);
+}
 
 //!Instruction vmuleub behavior method.
 void ac_behavior( vmuleub )
@@ -4845,7 +4867,30 @@ void ac_behavior( vmulosb )
 }
 
 //!Instruction vmulosh behavior method.
-void ac_behavior( vmulosh ){}
+void ac_behavior( vmulosh )
+{
+    dbg_printf(" vmulosh v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i;
+    int16_t ha, hb;
+    int32_t mul;
+
+    for (i = 0; i < 4; i++) {
+        ha = (int16_t) (0x0000FFFF & (a.data[i] >> 16));
+        hb = (int16_t) (0x0000FFFF & (b.data[i] >> 16));
+        
+        mul = ((int32_t) ha) * ((int32_t) hb);
+
+        t.data[i] = (uint32_t) mul;
+    }
+
+    VR.write(vrt, t);
+
+}
 
 //!Instruction vmuloub behavior method.
 void ac_behavior( vmuloub)
