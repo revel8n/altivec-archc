@@ -13,7 +13,7 @@ clean:
 	-rm -f *.bin *.s
 
 count: $(tests) ../model/powerpc.x
-	 @make -s do_test | sed -e 's/.* \(.*\)-.*/\1/' | uniq | grep -v gcc | wc -l
+	 @make -s do_test | sed -e 's/.* \(.*\)-.*/\1/' | sort | uniq | grep -v gcc | wc -l
 
 ../model/powerpc.x:
 	@echo Vai compilar o modelo :-P
@@ -31,6 +31,6 @@ test: $(tests) ../model/powerpc.x
 	@echo -n ' total: '
 	@cat /tmp/altivec.tests.txt | wc -l
 	@echo -n 'unique: '
-	@cat /tmp/altivec.tests.txt | sed -e 's/.* \(.*\)-.*/\1/' | uniq | grep -v gcc | wc -l 
+	@cat /tmp/altivec.tests.txt | sed -e 's/.* \(.*\)-.*/\1/' | sort | uniq | grep -v gcc | wc -l 
 	@rm -f /tmp/altivec.tests.txt
 
