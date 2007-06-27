@@ -7078,14 +7078,14 @@ void inline vcmpgtsw_impl(ac_reg<ac_word> &CR, vecbank &VR, int update_cr6, int 
     
     int i;
     int32_t wa, wb;
-    int32_t greater;
+    uint32_t greater;
     int remaining_gt = 4;
     int remaining_le = 4;
 
     for (i = 0; i < 4; i++) {
         wa = (int32_t) a.data[i];
         wb = (int32_t) b.data[i];
-        greater = (a.data[i] > b.data[i]);
+        greater = (wa > wb);
 
         if (greater) {
             remaining_gt--;
