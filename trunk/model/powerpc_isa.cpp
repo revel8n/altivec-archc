@@ -3479,10 +3479,10 @@ void ac_behavior( lvxl ){
 }
 
 //!Instruction lvsl behavior method.
-void ac_behavior( lvsl ){}
+//void ac_behavior( lvsl ){}
 
 //!Instruction lvsr behavior method.
-void ac_behavior( lvsr ){}
+//void ac_behavior( lvsr ){}
 
 //!Instruction stvebx behavior method.
 void ac_behavior( stvebx ){
@@ -3594,7 +3594,7 @@ void ac_behavior( stvxl ){
 }
 
 //!Instruction vpkpx behavior method.
-void ac_behavior( vpkpx ){}
+//void ac_behavior( vpkpx ){}
 
 //!Instruction vpkshss behavior method.
 void ac_behavior( vpkshss )
@@ -7361,7 +7361,7 @@ void ac_behavior( vmsumuhs ){
 }
 
 //!Instruction vsldoi behavior method.
-void ac_behavior( vsldoi ){}
+//void ac_behavior( vsldoi ){}
 
 //!Instruction vslb behavior method.
 void ac_behavior( vslb )
@@ -7982,6 +7982,12 @@ NOT_IMPLEMENTED( vexptefp );
 NOT_IMPLEMENTED( vlogefp );
 NOT_IMPLEMENTED( vrefp );
 NOT_IMPLEMENTED( vrsqrtefp );
+
+NOT_IMPLEMENTED( vsldoi );
+//NOT_IMPLEMENTED( lvxl );
+NOT_IMPLEMENTED( lvsl );
+NOT_IMPLEMENTED( lvsr );
+NOT_IMPLEMENTED( vpkpx );
 
         /*
         //halfword: 
