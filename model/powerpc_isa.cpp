@@ -3593,13 +3593,129 @@ void ac_behavior( stvxl ){
 void ac_behavior( vpkpx ){}
 
 //!Instruction vpkshss behavior method.
-void ac_behavior( vpkshss ){}
+void ac_behavior( vpkshss )
+{
+    dbg_printf(" vpkshss v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int word_pos;
+    int byte_pos;
+    int8_t ba, bb;
+    int16_t ha, hb;
+    uint32_t wt;
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        word_pos = i / 2;
+        for (j = 0; j < 2; j++) {
+            byte_pos = ((2 * i) + j) % 4;
+
+            // Get the halfwords from VRA and VRB
+            ha = (int16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (int16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+
+            // Check for saturation, equivalent to CLAMP
+            if ((ha < 0) && (abs(ha) > 0x80)) {
+                ha = -0x80;
+                saturated++;
+            } else if (ha > 0x7F) {
+                ha = 0x7F;
+                saturated++;
+            }
+            
+            if ((hb < 0) && (abs(hb) > 0x80)) {
+                hb = -0x80;
+                saturated++;
+            } else if (hb > 0x7F) {
+                hb = 0x7F;
+                saturated++;
+            }
+
+            // Get the 8 bits parts
+            ba = (uint8_t) (0x000000FF & ha);
+            bb = (uint8_t) (0x000000FF & hb);
+
+            // Write VRA part in VRT
+            wt = (((uint32_t) ba) & 0x000000FF) << (8 * byte_pos);
+            t.data[word_pos] |= wt;
+
+            // Write VRB part in VRT
+            wt = (((uint32_t) bb) & 0x000000FF) << (8 * byte_pos);
+            t.data[word_pos + 2] |= wt;
+        }
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vpkswss behavior method.
 void ac_behavior( vpkswss ){}
 
 //!Instruction vpkshus behavior method.
-void ac_behavior( vpkshus ){}
+void ac_behavior( vpkshus )
+{
+    dbg_printf(" vpkshus v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int word_pos;
+    int byte_pos;
+    int8_t ba, bb;
+    int16_t ha, hb;
+    uint32_t wt;
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        word_pos = i / 2;
+        for (j = 0; j < 2; j++) {
+            byte_pos = ((2 * i) + j) % 4;
+
+            // Get the halfwords from VRA and VRB
+            ha = (int16_t) (0x0000FFFF & (a.data[i] >> (16 * j)));
+            hb = (int16_t) (0x0000FFFF & (b.data[i] >> (16 * j)));
+
+            // Check for saturation
+            if (ha < 0) {
+                ba = 0x0;
+                saturated++;
+            } else if (ha > 0xFF) {
+                ba = 0xFF;
+                saturated++;
+            } else {
+                ba = (uint8_t) (0x000000FF & ha);
+            }
+
+            if (hb < 0) {
+                bb = 0x0;
+                saturated++;
+            } else if (hb > 0xFF) {
+                bb = 0xFF;
+                saturated++;
+            } else {
+                bb = (uint8_t) (0x000000FF & hb);
+            }
+
+            // Write VRA part in VRT
+            wt = (((uint32_t) ba) & 0x000000FF) << (8 * byte_pos);
+            t.data[word_pos] |= wt;
+
+            // Write VRB part in VRT
+            wt = (((uint32_t) bb) & 0x000000FF) << (8 * byte_pos);
+            t.data[word_pos + 2] |= wt;
+        }
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vpkswus behavior method.
 void ac_behavior( vpkswus ){}
