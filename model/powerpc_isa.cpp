@@ -3654,7 +3654,64 @@ void ac_behavior( vpkshss )
 }
 
 //!Instruction vpkswss behavior method.
-void ac_behavior( vpkswss ){}
+void ac_behavior( vpkswss )
+{
+    dbg_printf(" vpkswss v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int word_pos;
+    int half_pos;
+    int32_t wa, wb;
+    uint16_t ha, hb;
+    uint32_t wt;
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        // Calculate target positions
+        word_pos = i / 2;
+        half_pos = i % 2;
+
+        wa = (int32_t) a.data[i];
+        wb = (int32_t) b.data[i];
+
+        // Check for saturation
+        if ((wa < 0) && (abs(wa) > 0x8000)) {
+            ha = -0x8000;
+            saturated++;
+        } else if (wa > 0x7FFF) {
+            ha = 0x7FFF;
+            saturated++;
+        } else {
+            ha = (uint16_t) (0x0000FFFF & ((uint32_t) wa));
+        }
+
+        // Check for saturation
+        if ((wb < 0) && (abs(wb) > 0x8000)) {
+            hb = -0x8000;
+            saturated++;
+        } else if (wb > 0x7FFF) {
+            hb = 0x7FFF;
+            saturated++;
+        } else {
+            hb = (uint16_t) (0x0000FFFF & ((uint32_t) wb));
+        }
+
+        // Write VRA part in VRT
+        wt = (((uint32_t) ha) & 0x0000FFFF) << (16 * half_pos);
+        t.data[word_pos] |= wt;
+
+        // Write VRB part in VRT
+        wt = (((uint32_t) hb) & 0x0000FFFF) << (16 * half_pos);
+        t.data[word_pos + 2] |= wt;
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vpkshus behavior method.
 void ac_behavior( vpkshus )
@@ -5351,7 +5408,7 @@ void ac_behavior( vsum2sws )
         dbg_printf("sum = %#016lx\tabs(sum) = %#016lx\n", sum, abs(sum));
         
         // Check for saturation, equivalent to CLAMP
-        if ((sum < 0) && (abs(sum) > -0x80000000)) {
+        if ((sum < 0) && (abs(sum) > 0x80000000)) {
             raw = 0x80000000;
             saturated++;
         } else if (sum > 0x7FFFFFFF) {
