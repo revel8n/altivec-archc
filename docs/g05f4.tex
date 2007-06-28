@@ -1,4 +1,5 @@
-\documentclass[twocolumn]{article}
+\documentclass{article}
+%\documentclass[twocolumn]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -30,6 +31,20 @@ Tarcísio Genaro Rodrigues, 017391
 % modelo de como isso eh feito no relat anterior.
 
 %\item Lalalalla. \textbf{OK.}
+\item Durante essa fase termina o desenvolvimento de testes. \textbf{OK}
+
+\item Continua a atividade de implementação, implementando as instruções
+restantes. \textbf{OK}
+
+\item Começa e termina a atividade de integração final. \textbf{OK}
+
+\item \emph{(opcional)} Se houver tempo, testar se funcionam as otimizações de
+autovetorização do GCC 4.x OU testar a execução de um programa real que use
+AltiVec. \textbf{Não realizada.}
+
+\item \textbf{Entrega 4 -- 26/Junho}, contendo uma versão com todas
+\textbf{166}\footnote{No relatório anterior dizíamos 161.} instruções funcionando e testes para elas, e um relato do que foi
+desenvolvido durante a Fase 4. \textbf{136 implementadas.}
 
 \end{itemize}
 
@@ -37,22 +52,37 @@ Comentários sobre o que foi realizado:
 
 \subsection{Instruções implementadas}
 
-%A meta de 91 instruções implementadas e testadas foi atingida. O foco desta vez
-%foram as instruções mais complexas com operações sobre inteiros e lógicas. Os
-%grupos gerais e seus implementadores foram:
+Da meta inicial de 166 instruções implementadas e testadas, atingimos
+91 na entrega anterior e nesta entrega
+136 (ou seja, mais 45). No entanto, Das 30 não implementadas,
+26 se tratavam das
+instruções de ponto flutuante, que foram abandonadas\footnote{com
+acordo do professor.} por se tratarem
+de um conjunto complexo e exigirem um esforço incompatível com o tempo
+de que disponibilizamos durante o semestre letivo. 
+
+Os grupos gerais a serem implementados eram:
 
 \begin{itemize}
 
 % Aqui voce lista as da ultima fase somente
 
-%\item Vector Integer Multiply-Add/Sum Instructions (9 instruções) \who{Ribamar}
-%\item Vector Integer Average Instructions (6 instruções) \who{Ribamar}
-%\item Vector Integer Subtract Instructions (10 instruções) \who{Helder}
-%\item Vector Permute and Select Instructions (2 instruções) \who{Helder}
-%\item Vector Shift Instructions (3 instruções) \who{Helder}
-%\item Vector Integer Rotate and Shift Instructions (12 instruções) \who{Tarcísio}
-%\item Vector Integer Add Instructions (3 instruções) \who{Tarcísio}
-%\item Instruções órfãs de vários grupos (splat, mult, etc.) (~15 instruções) \who{Caio}
+\item Vector Alignment Support Instructions (lvsl, lvsr); 
+\item Vector Pack Instructions (vpk*, 9 instruções); 
+\item Vector Unpack Instructions (vupk*, 6 instruções); 
+\item Vector Merge Instructions (vmrg*, 6 instruções); 
+\item Vector Splat Instructions (vsplt*, 5 instruções); 
+\item Vector Integer Arithmetic Instructions - Multiply (vmul*, 9
+instruções);
+\item Vector Integer Arithmetic Instructions - Sum-Across (vsum*, 5
+instruções);
+\item Vector Integer Compare Instructions (vcmp*, 6 instruções); 
+\item Instruções órfãs de vários grupos (vsro, vsldoi);
+\end{itemize}
+
+As instruções \emph{lvsl, lvsr, vsldoi, vpkpx} ainda não foram
+concluídas. Cada integrante do grupo implementou pelo menos 10
+instruções. 
 
 
 % FIXME: falar que conversamos com o professor e retiramos Floating Point desta entrega
@@ -64,8 +94,102 @@ Comentários sobre o que foi realizado:
 % OPCIONAL: Se achar valido, coloque um teste (os de vcmp ou algum que tenha
 % saturacao sao interessantes)
 
+Os testes são, no entendimento do grupo,  a parte crucial do projeto.
+De acordo com o entendimento do grupo, a contribuição de um bom
+conjunto de testes poderia ser talvez maior do que a própria
+implementação das instruções, uma vez que acabam por definir a
+corretude da implementação. A implicação disto é que agora as
+instruções podem ser reimplementadas a qualquer momento, e qualquer
+regressão na implementação é automaticamente detectada com o sistema
+automatizado de testes. 
+
+No diretório \texttt{t} são encontrados os arquivos de testes
+(programas em c com instruções em assembler). Cada arquivo .c neste
+diretório é automaticamente reconhecido como um teste. Um \texttt{make
+test} neste diretório executa todos os testes, lista os que não
+passaram e apresenta um sumário como o abaixo: 
+\begin{verbatim}
+$ make test
+---
+passed: 176
+total: 176
+unique: 136
+\end{verbatim}
+
+A saída acima apresenta os resultados desta entrega. Foram realizados
+$176$ testes, todos procederam, sendo que 136 instruções foram
+testadas; ou seja, existem 40 testes suplementares para testar
+instruções que requeiram mais cuidado. O fato de algumas instruções
+contarem com apenas 1 programa de teste não compromete a
+confiabilidade dos testes: na verdade, a própria natureza das
+instruções de vetorização favorece a realização de teste, uma vez que
+a mesma lógica é em geral aplicada 4 vezes\footnote{A maioria das
+funções tem um \texttt{for(i=0; i<4; i++)}} à entrada. Claro que
+algumas instruções, como por exemplo as de Splat(\textit{vspl*}),
+que fazem com
+que o registrador de saída tenha um mesmo valor em várias posições,
+necessitam de testes suplementares. 
+Os testes têm a facilidade de poderem incluir o arquivo
+\texttt{test.h}, que contém macros de conveniência para que os testes
+abstraiam das várias chamadas de assembler necessárias para se testar
+uma instrução e foque apenas na instrução chamada. Assim, também a
+clareza dos códigos de teste é privilegiada. Por exemplo, 
+o teste \texttt{vupkhpx-1.c} é claro assim:
+\begin{verbatim}
+#include "test.h"
+
+int main() {
+        uint32_t a, b, c, d;
+
+        LOAD_VECTOR_U(12, 0xabcdefed, 0xbcdefedc, 0xcdefedcb,
+0x0efedcba);
+
+        asm("vupkhpx 14, 12");
+
+        STORE_VECTOR_U(14, a, b, c, d);
+
+        return !(a == 0xff1b0e0b && b == 0xff130f0f &&
+                 c == 0xff17051a && d == 0x0003171e);
+}
+
+\end{verbatim}
+
 
 \section{Conclusão}
+
+A tarefa de implementação do Altivec acabou se demonstrando que
+certamente não era das mais simples. As instruções de vetorização são
+um conjunto bem completo de operações de lógica, aritmética e de
+conjuntos. Por outro lado, se mostrou recompensatória visto que agora
+temos um conhecimento melhor da problemática da escolha do Instruction
+Set de um processador. Quantas vezes durante a implementação não nos
+perguntamos coisas como ``mas por que existem instrução para o bit de 
+cabeça para baixo e mas não para bit deitado!?''
+
+Além disto, também as habilidades de programação foram consideravelmente
+melhorados. Depois de algumas \textit{surras} já é bem mais
+compreensível para nós o respeito que devemos ter com números negativos, 
+que não basta operá-los, devemos tomar cuidado com sua representação
+binária, por exemplo. 
+
+Dentre as principais falhas do nosso projeto foi que não contornamos
+uma série de repetições de código. A especificação do PowerISA abusa das
+``facilidades do pseudo-código'', onde é extremamente fácil concatenar
+cadeias de bits de tamanho ilimitado e extrair somente a parte
+desejada. Se tivéssemos implementado um conjunto de funções abstraídas
+no pseudo-código teríamos hoje uma implementação bem mais enxuta e com
+bem menos repetição de código. 
+
+Sobre as dificuldades, ainda cabe citar a ausências de exemplos de
+execução na especificação do PowerISA e que os tipos de 128 bits devem
+ajudar as pessoas no futuro. 
+
+O grupo pretende implementar as 4 instruções restantes. Uma boa razão
+para isto é o entendimento de que a contribuição do projeto, podendo
+ser distribuido junto ao archc, extrapola os objetivos da
+disciplina.  
+
+E assim concluimos. 
 
 % Migueh, tem que ser coisa de 3 paragrafos com conteudo, ideias:
 
