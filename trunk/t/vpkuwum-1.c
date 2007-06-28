@@ -10,6 +10,6 @@ int main() {
 
 	NEW_STORE_VECTOR_U(15, a, b, c, d);
 
-	return !(a == 0x22220000 && b == 0x66664444 &&
-             c == 0xAAAA8888 && d == 0xEEEECCCC);
+	return !(a == 0x33331111 && b == 0x77775555 &&
+             c == 0xBBBB9999 && d == 0xFFFFDDDD);
 }

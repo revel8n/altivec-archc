@@ -3798,7 +3798,7 @@ void ac_behavior( vpkuhum )
         for (j = 0; j < 2; j++) {
             byte_pos = ((2 * i) + j) % 4;
 
-            pos_in_data = (2 * j) + 1;
+            pos_in_data = (2 * j);
 
             // Get the 8 bits parts from VRA and VRB
             ba = (uint8_t) (0x000000FF & (a.data[i] >> (8 * pos_in_data)));
@@ -3838,8 +3838,8 @@ void ac_behavior( vpkuwum )
         half_pos = i % 2;
         
         // Get the 16 bits parts from VRA and VRB
-        ha = (uint16_t) (0x0000FFFF & (a.data[i] >> 16));
-        hb = (uint16_t) (0x0000FFFF & (b.data[i] >> 16));
+        ha = (uint16_t) (0x0000FFFF & a.data[i]);
+        hb = (uint16_t) (0x0000FFFF & b.data[i]);
 
         // Write VRA part in VRT
         wt = (((uint32_t) ha) & 0x0000FFFF) << (16 * half_pos);
