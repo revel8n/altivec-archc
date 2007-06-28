@@ -10,9 +10,9 @@ int main() {
 	STORE_VECTOR_U(14, a, b, c, d);
 	uint32_t m , n, o, p; 
 	m = 0x0003171e;
-	n = 0xff130f0f;
-	o = 0xff0f061e; 
-	p = 0xff0a1e0d;      
+	n = 0xff17051a; 
+	o = 0xff130f0f; 
+	p = 0xff1b0e0b; 
 
 	return !(a == p && b == o &&  
 		 c == n && d == m);
