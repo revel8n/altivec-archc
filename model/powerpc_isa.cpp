@@ -4162,38 +4162,77 @@ void ac_behavior( vupkhpx ){
     for (int i=0; i < 4; i++){
         uint16_t hw0 = (b.data[i] & 0xffff0000) >> 1*16; 
         //high --> hw1 not used. 
-        uint16_t hw1 = (b.data[i] & 0x0000ffff) >> 0*16; 
+        //uint16_t hw1 = (b.data[i] & 0x0000ffff) >> 0*16; 
         uint8_t b0 = (hw0 & 0x8000) ?  0xff : 0; 
         uint8_t b1 = (hw0 >> 10) & 0x1f ; 
         uint8_t b2 = (hw0 >>  5) & 0x1f ; 
         uint8_t b3 = (hw0 >>  0) & 0x1f ; 
-        printf("-> hw0 = 0x%4x  hw0 & 0x8000 = 0x%4x\n", 
+        dbg_printf("-> hw0 = 0x%4x  hw0 & 0x8000 = 0x%4x\n", 
                 (unsigned short)hw0, (unsigned short)hw0 & 0x8000 ); 
-        printf("t = %#2x  %#2x  %#2x  %#2x\n ", (unsigned char) b0, 
+        dbg_printf("t = %#2x  %#2x  %#2x  %#2x\n ", (unsigned char) b0, 
                                       (unsigned char) b1, 
                                       (unsigned char) b2,
                                       (unsigned char) b3); 
 
         t.data[i] = (b0 << 24) + (b1 << 16) + (b2 << 8)  + b3; 
-        printf("t[%d] = 0x%8x\n\n", i, (unsigned int)t.data[i]); 
+        dbg_printf("t[%d] = 0x%8x\n\n", i, (unsigned int)t.data[i]); 
     }
     VR.write(vrt, t); 
 
 }
 
 //!Instruction vupkhsb behavior method.
-void ac_behavior( vupkhsb ){}
+// Vector Unpack High Signed Byte - powerisa spec pag 147. 
+void ac_behavior( vupkhsb ){
+
+    dbg_printf(" vupkhsb v%d, v%d\n\n", vrt, vrb);
+
+    vec t;
+    vec b = VR.read(vrb);
+    for (int i=0; i < 2; i++){
+        int8_t b0 = (b.data[i] & 0xff000000) >> 3*8; 
+        int8_t b1 = (b.data[i] & 0x00ff0000) >> 2*8; 
+        int8_t b2 = (b.data[i] & 0x0000ff00) >> 1*8; 
+        int8_t b3 = (b.data[i] & 0x000000ff) >> 0*8; 
+        printf(".b = {%#2x %#2x %#2x %#2x}\n", (unsigned char) b0, 
+                                      (unsigned char) b1, 
+                                      (unsigned char) b2,
+                                      (unsigned char) b3); 
+        int16_t hw0 = b0;
+        int16_t hw1 = b1; 
+        t.data[2*i] = (hw0 << 16) + (uint16_t)hw1; 
+        printf("hw0 = 0x%4x  hw1  = 0x%4x\n", 
+                (unsigned short)hw0, (unsigned short)hw1); 
+
+        hw0 = b2;
+        hw1 = b3; 
+        t.data[2*i+1] = (hw0 << 16) + (uint16_t)hw1; 
+        printf("hw0 = 0x%4x  hw1  = 0x%4x\n", 
+                (unsigned short)hw0, (unsigned short)hw1); 
+
+        printf("t[%d] = 0x%8x\t", 2*i, (int)t.data[2*i]); 
+        printf("t[%d] = 0x%8x\n\n", 2*i+1 , (int)t.data[2*i+1]); 
+    }
+
+    VR.write(vrt, t); 
+
+}
+
 
 //!Instruction vupkhsh behavior method.
+// Vector Unpack High Signed Halfword - powerisa spec pag 147. 
 void ac_behavior( vupkhsh ){}
 
 //!Instruction vupklpx behavior method.
+// Vector Unpack Low Pixel - powerisa spec pag 148. 
 void ac_behavior( vupklpx ){}
 
 //!Instruction vupklsb behavior method.
+// Vector Unpack Low Signed Byte - powerisa spec pag 148. 
 void ac_behavior( vupklsb ){}
 
 //!Instruction vupklsh behavior method.
+// Vector Unpack Low Signed Halfword - powerisa spec pag 148. 
 void ac_behavior( vupklsh ){}
 
 //!Instruction vspltb behavior method.
@@ -7817,10 +7856,10 @@ NOT_IMPLEMENTED( vrsqrtefp );
         printf("t[%d] = 0x%8x\n\n", i, (unsigned int)t.data[i]); 
 
         //byte: 
-        uint16_t b0 = (b.data[i] & 0xff000000) >> 3*8; 
-        uint16_t b1 = (b.data[i] & 0x00ff0000) >> 2*8; 
-        uint16_t b2 = (b.data[i] & 0x0000ff00) >> 1*8; 
-        uint16_t b3 = (b.data[i] & 0x000000ff) >> 0*8; 
+        uint8_t b0 = (b.data[i] & 0xff000000) >> 3*8; 
+        uint8_t b1 = (b.data[i] & 0x00ff0000) >> 2*8; 
+        uint8_t b2 = (b.data[i] & 0x0000ff00) >> 1*8; 
+        uint8_t b3 = (b.data[i] & 0x000000ff) >> 0*8; 
 
         dbg_printf("t = {%#2x,%#2x,%#2x,%#2x}\n ", (unsigned char) b0, 
                                       (unsigned char) b1, 
