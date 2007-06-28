@@ -4159,23 +4159,36 @@ void ac_behavior( vupkhpx ){
 
     vec t;
     vec b = VR.read(vrb);
-    for (int i=0; i < 4; i++){
+    for (int i=0; i < 2; i++){
         uint16_t hw0 = (b.data[i] & 0xffff0000) >> 1*16; 
-        //high --> hw1 not used. 
-        //uint16_t hw1 = (b.data[i] & 0x0000ffff) >> 0*16; 
+        uint16_t hw1 = (b.data[i] & 0x0000ffff) >> 0*16; 
         uint8_t b0 = (hw0 & 0x8000) ?  0xff : 0; 
         uint8_t b1 = (hw0 >> 10) & 0x1f ; 
         uint8_t b2 = (hw0 >>  5) & 0x1f ; 
         uint8_t b3 = (hw0 >>  0) & 0x1f ; 
-        dbg_printf("-> hw0 = 0x%4x  hw0 & 0x8000 = 0x%4x\n", 
+        printf("hw0 = 0x%4x  hw0 & 0x8000 = 0x%4x\n", 
                 (unsigned short)hw0, (unsigned short)hw0 & 0x8000 ); 
-        dbg_printf("t = %#2x  %#2x  %#2x  %#2x\n ", (unsigned char) b0, 
+        printf("t = %#2x  %#2x  %#2x  %#2x\n ", (unsigned char) b0, 
                                       (unsigned char) b1, 
                                       (unsigned char) b2,
                                       (unsigned char) b3); 
 
-        t.data[i] = (b0 << 24) + (b1 << 16) + (b2 << 8)  + b3; 
-        dbg_printf("t[%d] = 0x%8x\n\n", i, (unsigned int)t.data[i]); 
+        t.data[2*i] = (b0 << 24) + (b1 << 16) + (b2 << 8)  + b3; 
+        printf("t[%d] = 0x%8x\n\n", 2*i, (int)t.data[2*i]); 
+
+        b0 = (hw1 & 0x8000) ?  0xff : 0; 
+        b1 = (hw1 >> 10) & 0x1f ; 
+        b2 = (hw1 >>  5) & 0x1f ; 
+        b3 = (hw1 >>  0) & 0x1f ; 
+        printf("hw1 = 0x%4x  hw1 & 0x8000 = 0x%4x\n", 
+                (unsigned short)hw1, (unsigned short)hw1 & 0x8000 ); 
+        printf("t = %#2x  %#2x  %#2x  %#2x\n ", (unsigned char) b0, 
+                                      (unsigned char) b1, 
+                                      (unsigned char) b2,
+                                      (unsigned char) b3); 
+
+        t.data[2*i+1] = (b0 << 24) + (b1 << 16) + (b2 << 8)  + b3; 
+        printf("t[%d] = 0x%8x\n\n", 2*i+1 , (int)t.data[2*i+1]); 
     }
     VR.write(vrt, t); 
 
@@ -4233,19 +4246,19 @@ void ac_behavior( vupkhsh ){
         int16_t hw0 = (b.data[i] & 0xffff0000) >> 1*16; 
         int16_t hw1 = (b.data[i] & 0x0000ffff) >> 0*16; 
 
-        printf("hw0 = %d  hw1  = %d\n", 
+        dbg_printf("hw0 = %d  hw1  = %d\n", 
                 (signed short)hw0, (signed short)hw1); 
 
-        printf("hw0 = 0x%4x  hw1  = 0x%4x\n", 
+        dbg_printf("hw0 = 0x%4x  hw1  = 0x%4x\n", 
                 (unsigned short)hw0, (unsigned short)hw1); 
 
         t.data[2*i]   = (int32_t) hw0; 
         t.data[2*i+1] = (int32_t) hw1; 
 
-        printf("t[%d] = 0x%8x\t", 2*i, (unsigned int)t.data[2*i]); 
-        printf("%ld\n", (signed int)t.data[2*i]); 
-        printf("t[%d] = 0x%8x\t", 2*i+1 , (unsigned int)t.data[2*i+1]); 
-        printf("%ld\n\n", (signed int)t.data[2*i+1]); 
+        dbg_printf("t[%d] = 0x%8x\t", 2*i, (unsigned int)t.data[2*i]); 
+        dbg_printf("%ld\n", (signed int)t.data[2*i]); 
+        dbg_printf("t[%d] = 0x%8x\t", 2*i+1 , (unsigned int)t.data[2*i+1]); 
+        dbg_printf("%ld\n\n", (signed int)t.data[2*i+1]); 
     }
 
     VR.write(vrt, t); 
