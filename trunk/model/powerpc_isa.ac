@@ -2,6 +2,10 @@
  * @file      powerpc_isa.ac
  * @author    Bruno Corsi dos Santos
  *            Alexandro Baldassin (assembly information)
+ *            Caio Marcelo de Oliveira Filho (altivec)
+ *            Ribamar Santarosa de Sousa (altivec)
+ *            Helder dos Santos Ribeiro (altivec)
+ *            Tarcísio Genaro Rodrigues (altivec)
  *
  *            The ArchC Team
  *            http://www.archc.org/
