@@ -3718,7 +3718,64 @@ void ac_behavior( vpkshus )
 }
 
 //!Instruction vpkswus behavior method.
-void ac_behavior( vpkswus ){}
+void ac_behavior( vpkswus )
+{
+    dbg_printf(" vpkuwus v%d, v%d, v%d\n\n", vrt, vra, vrb);
+
+    vec t(0);
+    vec a = VR.read(vra);
+    vec b = VR.read(vrb);
+
+    int i, j;
+    int word_pos;
+    int half_pos;
+    int32_t wa, wb;
+    uint16_t ha, hb;
+    uint32_t wt;
+    int saturated = 0;
+
+    for (i = 0; i < 4; i++) {
+        // Calculate target positions
+        word_pos = i / 2;
+        half_pos = i % 2;
+        
+        wa = (int32_t) a.data[i];
+        wb = (int32_t) b.data[i];
+
+        // Check for saturation
+        if (wa < 0) {
+            ha = 0x0;
+            saturated++;
+        } else if (wa > 0xFFFF) {
+            ha = 0xFFFF;
+            saturated++;
+        } else {
+            ha = (uint16_t) (0x0000FFFF & ((uint32_t) wa));
+        }
+
+        // Check for saturation
+        if (wb < 0) {
+            hb = 0x0;
+            saturated++;
+        } else if (wb > 0xFFFF) {
+            hb = 0xFFFF;
+            saturated++;
+        } else {
+            hb = (uint16_t) (0x0000FFFF & ((uint32_t) wb));
+        }
+
+        // Write VRA part in VRT
+        wt = (((uint32_t) ha) & 0x0000FFFF) << (16 * half_pos);
+        t.data[word_pos] |= wt;
+
+        // Write VRB part in VRT
+        wt = (((uint32_t) hb) & 0x0000FFFF) << (16 * half_pos);
+        t.data[word_pos + 2] |= wt;
+    }
+
+    VR.write(vrt, t);
+    if (saturated) VSCR_SAT(VSCR, 1);
+}
 
 //!Instruction vpkuhum behavior method.
 void ac_behavior( vpkuhum )
