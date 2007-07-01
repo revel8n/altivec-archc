@@ -4009,8 +4009,7 @@ void ac_behavior( vpkuwus )
 //!Instruction vmrghb behavior method.
 // Vector Merge High Byte - powerisa spec pag 149. 
 void ac_behavior( vmrghb ){
-
-    dbg_printf(" vmrghb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrghb v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
@@ -4038,8 +4037,7 @@ void ac_behavior( vmrghb ){
 //!Instruction vmrghw behavior method.
 // Vector Merge High Word - powerisa spec pag 149. 
 void ac_behavior( vmrghw ){
-
-    dbg_printf(" vmrghw v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrghw v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
@@ -4059,7 +4057,7 @@ void ac_behavior( vmrghw ){
 //!Instruction vmrghh behavior method.
 // Vector Merge High Halfword - powerisa spec pag 149. 
 void ac_behavior( vmrghh ){
-    dbg_printf(" vmrghh v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrghh v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
@@ -4081,8 +4079,7 @@ void ac_behavior( vmrghh ){
 //!Instruction vmrglb behavior method.
 // Vector Merge Low Byte - powerisa spec pag 150. 
 void ac_behavior( vmrglb ){
-    
-    dbg_printf(" vmrglb v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrglb v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
@@ -4112,8 +4109,7 @@ void ac_behavior( vmrglb ){
 //!Instruction vmrglw behavior method.
 // Vector Merge Low Word - powerisa spec pag 150. 
 void ac_behavior( vmrglw ){
-    
-    dbg_printf(" vmrglw v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrglw v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
@@ -4133,8 +4129,7 @@ void ac_behavior( vmrglw ){
 //!Instruction vmrglh behavior method.
 // Vector Merge Low Halfword - powerisa spec pag 150. 
 void ac_behavior( vmrglh ){
-
-    dbg_printf(" vmrglh v%d, v%d, %d\n\n", vrt, vrb, uim4);
+    dbg_printf(" vmrglh v%d, v%d, v%d\n\n", vrt, vra, vrb);
 
     vec t;
     vec a = VR.read(vra);
