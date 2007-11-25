@@ -8,6 +8,11 @@ Our project extends an existing ArchC model, [http://archc.sourceforge.net/index
 
 Altivec instructions are specified in the chapter 5 of [http://altivec-archc.googlecode.com/files/PowerISA_Public.pdf PowerIsa specification].
 
+= Getting =
+
+As of this, code is only available via svn. 
+
+svn co http://altivec-archc.googlecode.com/svn/trunk/
 
 = Futher Reading =
 
