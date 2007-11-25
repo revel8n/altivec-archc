@@ -1,4 +1,4 @@
-= Altivec-ArchC =
+= Altivec-ArchC. =
 
 [http://www.systemc.org SystemC] is a widely used system description language; SystemC is set of library routines and macros implemented in C++, which makes it possible to simulate concurrent processes, described by ordinary C++ syntax.
 
@@ -8,13 +8,13 @@ Our project extends an existing ArchC model, [http://archc.sourceforge.net/index
 
 Altivec instructions are specified in the chapter 5 of [http://altivec-archc.googlecode.com/files/PowerISA_Public.pdf PowerIsa specification].
 
-= Getting =
+= Getting. =
 
 As of this, code is only available via svn. 
 
 svn co http://altivec-archc.googlecode.com/svn/trunk/
 
-= Futher Reading =
+= Futher Reading. =
 
  * http://en.wikipedia.org/wiki/SystemC 
 
