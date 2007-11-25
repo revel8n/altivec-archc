@@ -2,7 +2,7 @@
 
 [http://www.systemc.org SystemC] is a widely used system description language; SystemC is set of library routines and macros implemented in C++, which makes it possible to simulate concurrent processes, described by ordinary C++ syntax.
 
-[http://www.archc.org ArchC] is an architecture description language that generates SystemC code.
+[http://www.archc.org ArchC] is an architecture description language that [http://archc.sourceforge.net/index.php%3Fmodule=pagemaster&PAGE_user_op=view_page&PAGE_id=7&MMN_position=27:16.html generates SystemC code].
 
 Our project extends an existing ArchC model, [http://archc.sourceforge.net/index.php%3Fmodule=pagemaster&PAGE_user_op=view_page&PAGE_id=8&MMN_position=17:17.html the PowerPC one], to include the Altivec instructions. 
 
